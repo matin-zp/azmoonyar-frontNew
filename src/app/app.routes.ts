@@ -1,3 +1,5 @@
+// [file name]: app.routes.ts
+// [file content begin]
 import { Routes } from '@angular/router';
 import { NavbarComponent } from './layouts/navbar-layout';
 
@@ -11,14 +13,24 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/login/login.component').then(m => m.LoginComponent)
   },
+  
+  // TEACHER DASHBOARD
   {
-  path: 'teacher-dashboard',
-  loadComponent: () =>
-    import('./pages/teacher-dashboard/teacher-dashboard.component')
-      .then(c => c.TeacherDashboardComponent)
-},
+    path: 'teacher-dashboard',
+    loadComponent: () =>
+      import('./pages/teacher-dashboard/teacher-dashboard.component')
+        .then(c => c.TeacherDashboardComponent)
+  },
+  
+  // COURSE DETAILS
+  {
+    path: 'courses/:id',
+    loadComponent: () =>
+      import('./pages/course-details/course-details.component')
+        .then(c => c.CourseDetailsComponent)
+  },
 
-
+  // NAVBAR LAYOUT
   {
     path: '',
     component: NavbarComponent,
@@ -44,3 +56,4 @@ export const routes: Routes = [
 
   { path: '**', redirectTo: 'login' }
 ];
+// [file content end]

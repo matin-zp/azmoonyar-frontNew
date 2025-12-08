@@ -1,0 +1,244 @@
+<div class="course-details-container" *ngIf="!loading && course; else loadingTpl">
+  
+  <!-- هدر درس -->
+  <div class="course-header-section">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← بازگشت</button>
+      
+      <div class="course-title">
+        <h1>{{ course.courseName }}</h1>
+        <div class="course-meta">
+          <span class="course-code">{{ convertToPersianNumbers(course.courseCode) }}</span>
+          <span class="divider">•</span>
+          <span class="course-teacher">استاد: {{ course.teacher.firstName }} {{ course.teacher.lastName }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="course-schedule">
+      <div class="schedule-item">
+        <span class="schedule-icon">📅</span>
+        <span class="schedule-text">{{ course.dayOfWeek }}</span>
+      </div>
+      <div class="schedule-item">
+        <span class="schedule-icon">🕒</span>
+        <span class="schedule-text">{{ convertToPersianNumbers(course.timeC) }}</span>
+      </div>
+      <div class="schedule-item">
+        <span class="schedule-icon">📍</span>
+        <span class="schedule-text">{{ course.roomC }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- کارت‌های آماری -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <div class="stat-number">{{ convertToPersianNumbers(stats.totalStudents.toString()) }}</div>
+        <div class="stat-label">دانشجو</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">📝</div>
+      <div class="stat-info">
+        <div class="stat-number">{{ convertToPersianNumbers(stats.totalExams.toString()) }}</div>
+        <div class="stat-label">امتحان کل</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-info">
+        <div class="stat-number">{{ convertToPersianNumbers(stats.activeExams.toString()) }}</div>
+        <div class="stat-label">امتحان فعال</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-info">
+        <div class="stat-number">{{ convertToPersianNumbers(stats.upcomingExams.toString()) }}</div>
+        <div class="stat-label">آینده</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- بخش امتحان‌های آینده -->
+  <div class="section-card" *ngIf="upcomingExams.length > 0">
+    <div class="section-header">
+      <h2>📅 امتحان‌های آینده</h2>
+      <span class="section-badge">{{ convertToPersianNumbers(upcomingExams.length.toString()) }} امتحان</span>
+    </div>
+    
+    <div class="exams-list">
+      <div 
+        *ngFor="let exam of upcomingExams" 
+        class="exam-card"
+        [ngClass]="getExamStatusClass(exam.startDate)"
+        (click)="goToExam(exam.id)"
+      >
+        <div class="exam-icon">📝</div>
+        
+        <div class="exam-info">
+          <h3 class="exam-name">{{ exam.name }}</h3>
+          <div class="exam-details">
+            <span class="exam-room">📍 {{ exam.room.name }}</span>
+            <span class="exam-time">🕒 {{ exam.timeRange }}</span>
+          </div>
+        </div>
+        
+        <div class="exam-date">
+          <div class="exam-day">{{ exam.dayOfWeek }}</div>
+          <div class="exam-date-number">{{ exam.persianDate }}</div>
+          <div class="exam-status" [ngClass]="getExamStatusClass(exam.startDate)">
+            {{ getExamStatusText(exam.startDate) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- لیست دانشجویان (مرتب شده بر اساس نام خانوادگی) -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2>👥 دانشجویان (مرتب شده بر اساس نام خانوادگی)</h2>
+      <span class="section-badge">{{ convertToPersianNumbers(stats.totalStudents.toString()) }} نفر</span>
+    </div>
+    
+    <div class="students-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ردیف</th>
+            <th>شماره دانشجویی</th>
+            <th>نام</th>
+            <th>نام خانوادگی</th>
+            <th>وضعیت</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let student of paginatedStudents; let i = index">
+            <td class="row-number">
+              {{ convertToPersianNumbers(((currentPage - 1) * studentsPerPage + i + 1).toString()) }}
+            </td>
+            <td class="student-number">
+              {{ convertToPersianNumbers(student.studentNumber) }}
+            </td>
+            <td class="student-name">
+              {{ student.firstName }}
+            </td>
+            <td class="student-name">
+              {{ student.lastName }}
+            </td>
+            <td>
+              <span class="status-badge status-active">فعال</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- صفحه‌بندی -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)"
+      >
+        ‹ قبلی
+      </button>
+      
+      <div class="page-numbers">
+        <span 
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          class="page-number"
+          [ngClass]="{ active: currentPage === i + 1 }"
+          (click)="changePage(i + 1)"
+        >
+          {{ convertToPersianNumbers((i + 1).toString()) }}
+        </span>
+      </div>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)"
+      >
+        بعدی ›
+      </button>
+    </div>
+  </div>
+
+  <!-- همه امتحان‌ها -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2>📋 همه امتحان‌ها</h2>
+      <span class="section-badge">{{ convertToPersianNumbers(course.exams.length.toString()) }} مورد</span>
+    </div>
+    
+    <div class="all-exams-table">
+      <table>
+        <thead>
+          <tr>
+            <th>نام امتحان</th>
+            <th>تاریخ</th>
+            <th>زمان</th>
+            <th>سالن</th>
+            <th>ظرفیت</th>
+            <th>وضعیت</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let exam of course.exams">
+            <td class="exam-name-cell">
+              <div class="exam-name-row">
+                <span class="exam-icon-small">📝</span>
+                {{ exam.name }}
+              </div>
+            </td>
+            <td>{{ formatToPersianDatePublic(exam.startDate) }}</td>
+            <td>{{ formatTimePublic(exam.startDate) }} - {{ formatTimePublic(exam.endDate) }}</td>
+            <td>
+              <span class="room-badge">📍 {{ exam.room.name }}</span>
+            </td>
+            <td>
+              <span class="capacity-badge">{{ convertToPersianNumbers(exam.room.capacity.toString()) }} نفر</span>
+            </td>
+            <td>
+              <span 
+                class="status-badge"
+                [ngClass]="getExamStatusClass(exam.startDate)"
+              >
+                {{ getExamStatusText(exam.startDate) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- پیام خطا -->
+<div *ngIf="!loading && errorMessage" class="error-container">
+  <div class="error-content">
+    <div class="error-icon">⚠️</div>
+    <h3>خطا در بارگذاری</h3>
+    <p>{{ errorMessage }}</p>
+    <button class="back-btn" (click)="goBack()">بازگشت به داشبورد</button>
+  </div>
+</div>
+
+<!-- لودینگ -->
+<ng-template #loadingTpl>
+  <div class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p class="loading-text">در حال بارگذاری اطلاعات درس...</p>
+    </div>
+  </div>
+</ng-template>

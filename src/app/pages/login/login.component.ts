@@ -21,9 +21,16 @@ export class LoginComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
   login() {
-    this.auth.login(this.username, this.password, this.role).subscribe({
-      next: () => this.router.navigate(['/teacher-dashboard']),
-      error: () => this.errorMsg = "نام کاربری یا رمز عبور اشتباه است"
-    });
-  }
+  this.auth.login(this.username, this.password, this.role).subscribe({
+    next: () => {
+      if (this.role === 'teacher') {
+        this.router.navigate(['/teacher-dashboard']);
+      } else if (this.role === 'student') {
+        this.router.navigate(['/student-dashboard']);
+      }
+    },
+    error: () => this.errorMsg = "نام کاربری یا رمز عبور اشتباه است"
+  });
+}
+
 }
