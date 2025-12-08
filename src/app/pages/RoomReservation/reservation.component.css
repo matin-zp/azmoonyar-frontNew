@@ -1,0 +1,119 @@
+.reservations-container {
+  text-align: center;
+  padding: 2rem;
+  direction: rtl;
+  background-color:#f5f9ff ;
+}
+
+.halls-grid {
+  margin-top: 40px;
+  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  justify-items: center;
+  
+}
+
+.hall-card {
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 1rem;
+  padding: 1rem;
+  width: 260px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hall-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.circle img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hall-name {
+  margin-top: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.hall-capacity {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.reserve-btn {
+  width: 100%;
+  background-color: #0ea5e9;
+}
+.reserve-btn:hover{
+  background-color: #0284c7;
+}
+
+.overlay-panel {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  padding: 2rem;
+ 
+}
+
+.save-btn {
+  margin-top: 1rem;
+  width: 100%;
+  background: #0ea5e9 !important;
+  color: white;
+}
+.save-btn:hover{
+  background: #0284c7 !important;
+}
+
+
+
+.saved-list {
+  margin-top: 2rem;
+  direction: rtl;
+  text-align: center;
+}
+
+.saved-list h3 {
+  margin-bottom: 1rem;
+  color: #2d3748;
+}
+
+.reservation-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reservation-table th,
+.reservation-table td {
+  border: 1px solid #ddd;
+  padding: 0.6rem;
+}
+
+.reservation-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+::ng-deep jalali-datepicker {
+  background-color: #bae6fd !important; /* رنگ آبی آسمانی (Tailwind: bg-sky-200) */
+  border-radius: 0.75rem; /* rounded-lg */
+  padding: 0.5rem; /* p-2 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* shadow-md */
+  display: block;
+}
+
+
+
+
+

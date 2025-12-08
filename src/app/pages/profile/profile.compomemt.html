@@ -1,0 +1,70 @@
+<div class="max-w-3xl mx-auto mt-10 p-4 text-right">
+
+  <p-card class="shadow-xl rounded-2xl">
+    <div class="flex flex-col md:flex-row items-center gap-6">
+
+      <!-- عکس پروفایل -->
+      <div class="w-32 h-32 bg-blue-500 text-white rounded-full flex items-center justify-center text-4xl font-bold">
+        <img src="https://picsum.photos/200" class="rounded-full">
+      </div>
+
+      <!-- اطلاعات -->
+      <div class="flex-1 space-y-3">
+        <h2 class="text-2xl font-bold text-gray-800">پروفایل استاد</h2>
+
+        <p><span class="font-semibold text-gray-700">نام:</span> {{ professor.firstName }}</p>
+        <p><span class="font-semibold text-gray-700">نام خانوادگی:</span> {{ professor.lastName }}</p>
+        <p><span class="font-semibold text-gray-700">شماره پرسنلی:</span> {{ professor.personnelId }}</p>
+        <p><span class="font-semibold text-gray-700">ایمیل:</span> {{ professor.email }}</p>
+
+        <button
+          pButton
+          label="ویرایش پروفایل"
+          icon="pi pi-pencil"
+          class="p-button-info mt-3"
+          (click)="openEditDialog()">
+        </button>
+      </div>
+
+    </div>
+  </p-card>
+</div>
+
+<!-- ✨ پنجره ویرایش اطلاعات -->
+<p-dialog 
+  header="ویرایش اطلاعات" 
+  [(visible)]="editDialogVisible" 
+  [modal]="true" 
+  [style]="{ width: '450px' }"
+  [draggable]="false">
+
+  <div class="flex flex-col gap-4">
+
+    <div>
+      <label class="block text-gray-700 mb-1">نام</label>
+      <input pInputText type="text" class="w-full" [(ngModel)]="tempData.firstName">
+    </div>
+
+    <div>
+      <label class="block text-gray-700 mb-1">نام خانوادگی</label>
+      <input pInputText type="text" class="w-full" [(ngModel)]="tempData.lastName">
+    </div>
+
+    <div>
+      <label class="block text-gray-700 mb-1">شماره پرسنلی</label>
+      <input pInputText type="text" class="w-full" [(ngModel)]="tempData.personnelId">
+    </div>
+
+    <div>
+      <label class="block text-gray-700 mb-1">ایمیل</label>
+      <input pInputText type="email" class="w-full" [(ngModel)]="tempData.email">
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="لغو" class="p-button-text" (click)="editDialogVisible = false"></button>
+    <button pButton label="ذخیره" class="p-button-success" (click)="saveChanges()"></button>
+  </ng-template>
+
+</p-dialog>

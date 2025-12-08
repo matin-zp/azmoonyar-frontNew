@@ -1,0 +1,123 @@
+<div dir="rtl" class="p-8 bg-slate-50 min-h-screen text-gray-800">
+
+  <!-- 🔵 ردیف اول: مرور امروز + تقویم -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+    <!-- مرور امروز -->
+    <div class="border border-blue-300 bg-white rounded-xl p-6 shadow-sm">
+      <h2 class="text-xl font-bold text-blue-700 mb-4">مرور امروز</h2>
+      <ul class="list-disc pr-5 space-y-2">
+        <li *ngFor="let item of todayOverview">{{ item }}</li>
+      </ul>
+    </div>
+
+    <!-- تقویم شمسی -->
+    <div class="bg-white rounded-2xl shadow-md p-6 border border-blue-200">
+
+      <div class="flex justify-between mb-6">
+        <div class="flex gap-2">
+          <button class="cal-nav-btn" (click)="prevYear()">« سال قبل</button>
+          <button class="cal-nav-btn" (click)="prevMonth()">‹ ماه قبل</button>
+        </div>
+
+        <div class="text-2xl font-extrabold text-blue-700">
+          {{ monthName }} <span class="text-blue-500">{{ currentYear }}</span>
+        </div>
+
+        <div class="flex gap-2">
+          <button class="cal-nav-btn" (click)="nextMonth()">ماه بعد ›</button>
+          <button class="cal-nav-btn" (click)="nextYear()">سال بعد »</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-7 text-center text-gray-600 font-semibold mb-3">
+        <div *ngFor="let d of daysOfWeek">{{ d }}</div>
+      </div>
+
+      <div class="grid grid-cols-7 gap-y-2 text-center">
+        <div
+          *ngFor="let day of calendarGrid"
+          class="cal-day"
+          [ngClass]="{ 'cal-today': isToday(day), 'cal-empty': day === null }"
+        >
+          {{ day ?? '' }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 🔵 امتحان‌های پیش‌رو -->
+  <div class="border border-blue-300 bg-white rounded-3xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-blue-700 mb-4 text-center">امتحان‌های پیش‌رو</h2>
+
+    <ng-container *ngIf="upcomingExams.length; else noExams">
+
+      <table class="w-full text-center border-collapse shadow-sm rounded-xl overflow-hidden">
+        <thead class="bg-blue-100 text-blue-900 font-semibold">
+          <tr>
+            <th class="p-2 border">شماره</th>
+            <th class="p-2 border">نام امتحان</th>
+            <th class="p-2 border">تاریخ</th>
+            <th class="p-2 border">شروع</th>
+            <th class="p-2 border">پایان</th>
+            <th class="p-2 border">سالن</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let item of visibleExams; let i = index"
+            class="transition rounded-xl"
+            [ngClass]="[
+              getWeekCssClass(item.weekColor),
+              isExamPast(item) ? 'exam-past' : ''
+            ]"
+          >
+            <td class="border p-2">{{ i + 1 }}</td>
+            <td class="border p-2">{{ item.name }}</td>
+            <td class="border p-2">{{ item.date }}</td>
+            <td class="border p-2">{{ item.startTime }}</td>
+            <td class="border p-2">{{ item.endTime }}</td>
+            <td class="border p-2">{{ item.roomName }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="flex justify-between items-center mt-3">
+        <span class="text-sm text-gray-500">
+          {{ visibleExams.length }} از {{ upcomingExams.length }} امتحان نمایش داده شده است
+        </span>
+
+        <button
+          *ngIf="upcomingExams.length > maxVisibleExams"
+          (click)="toggleShowMore()"
+          pButton
+          class="p-button-outlined p-button-info"
+          [label]="showAllExams ? 'نمایش کمتر' : 'نمایش بیشتر'"
+        ></button>
+      </div>
+
+    </ng-container>
+
+    <ng-template #noExams>
+      <p class="text-center text-gray-500">هیچ امتحانی ثبت نشده است.</p>
+    </ng-template>
+  </div>
+
+  <!-- 🔵 درس‌های من -->
+  <div class="border border-blue-300 bg-white rounded-3xl p-6 mb-6 shadow-sm">
+    <h2 class="text-xl font-bold text-blue-700 mb-4">درس‌های من</h2>
+
+    <div class="flex flex-wrap gap-4">
+      <div
+        *ngFor="let course of myCourses"
+        class="border border-blue-400 bg-blue-50 text-blue-700 px-6 py-2 rounded-xl cursor-pointer hover:bg-blue-100 transition"
+        [routerLink]="['/courses', course.id]"
+      >
+        {{ course.courseName }}
+      </div>
+    </div>
+  </div>
+
+</div>

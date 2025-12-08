@@ -1,0 +1,55 @@
+<div class="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+
+  <h2 class="text-2xl font-bold text-gray-800 mb-3">
+    {{ survey?.title }}
+  </h2>
+
+  <p *ngIf="survey?.description" class="text-gray-600 mb-6">
+    {{ survey?.description }}
+  </p>
+
+  <div *ngIf="survey; else loading">
+
+    <div class="space-y-4">
+
+      <!-- گزینه‌ها -->
+      <div
+        *ngFor="let option of survey.options; let i = index"
+        class="border p-4 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
+      >
+        <div class="flex justify-between items-center">
+          <span class="text-lg font-medium">{{ option }}</span>
+
+          <!-- دکمه رأی -->
+          <button
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-lg"
+            (click)="vote(i)"
+          >
+            🔘 رأی بده
+          </button>
+        </div>
+
+        <!-- نوار درصد -->
+        <div *ngIf="showResults" class="w-full bg-gray-200 rounded mt-3">
+          <div
+            class="bg-green-600 text-white text-sm text-center py-1 rounded"
+            [style.width.%]="getVotePercent(i)"
+          >
+            {{ getVotePercent(i) | number : '1.0-0' }}%
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- جمع کل رأی‌ها -->
+    <p *ngIf="showResults" class="text-center text-gray-700 mt-6 font-semibold">
+      مجموع رأی‌ها: {{ totalVotes }}
+    </p>
+
+  </div>
+
+  <ng-template #loading>
+    <p class="text-center text-gray-500">در حال بارگذاری...</p>
+  </ng-template>
+</div>

@@ -1,0 +1,32 @@
+<div class="bg-white rounded-md shadow p-4 text-center">
+  <!-- 🔼 کنترل ماه -->
+  <div class="flex justify-between items-center mb-2">
+    <button (click)="changeMonth('prev')" class="text-blue-600 hover:underline">« ماه قبل</button>
+    <div class="font-bold text-lg text-blue-800">
+      {{ monthName }} {{ selectedYear }}
+    </div>
+    <button (click)="changeMonth('next')" class="text-blue-600 hover:underline">ماه بعد »</button>
+  </div>
+
+  <!-- 🗓️ روزهای هفته -->
+  <div class="grid grid-cols-7 gap-2 text-sm text-gray-700 mb-2">
+    @for (day of daysOfWeek; track day) {
+      <div class="text-[11px]">{{ day }}</div>
+    }
+  </div>
+
+  <!-- 📅 روزهای ماه -->
+  <div class="grid grid-cols-7 gap-2 text-sm cursor-pointer">
+  @for (day of calendarGrid; track day) {
+    <div
+      [class.white]="day === selectedDay"
+      [class.text-red-600]="day === selectedDay"
+      [class.rounded-full]="day === selectedDay"
+      class="py-1 text-center hover:bg-blue-600 hover:rounded-full"
+      (click)="day && selectDay(day)">
+      {{ day ?? '' }}
+    </div>
+  }
+</div>
+
+</div>

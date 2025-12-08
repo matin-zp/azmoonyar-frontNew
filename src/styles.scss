@@ -1,0 +1,106 @@
+/* ========== Global Imports ========== */
+@use "tailwindcss";
+@use "primeicons/primeicons.css";
+
+/* ========== Global CSS Variables ========== */
+:root {
+  --primary-color: #0a1930;
+  --secondary-color: #3b82f6;
+  --accent-color: #60a5fa;
+  --light-blue: #e0efff;
+  --lighter-blue: #f0f7ff;
+  --border-color: #c2d4ea;
+  --white: #ffffff;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --transition: all 0.25s ease;
+  --border-radius: 16px;
+  --card-padding: 24px;
+}
+
+/* ===========================================
+   ✨ CALENDAR BUTTON
+=========================================== */
+.calendar-btn {
+  @apply px-3 py-1.5 rounded-lg shadow border transition-all duration-200;
+
+  background: var(--light-blue);
+  color: var(--secondary-color);
+  border-color: var(--border-color);
+}
+
+.calendar-btn:hover {
+  background: var(--lighter-blue);
+}
+
+/* ===========================================
+   ✨ CALENDAR DAY (Default)
+=========================================== */
+.calendar-day,
+.cal-day {
+  @apply py-2 text-center rounded-lg cursor-pointer font-medium
+         flex items-center justify-center transition-all duration-150;
+
+  background: var(--lighter-blue);
+  color: var(--primary-color);
+}
+
+.calendar-day:hover,
+.cal-day:hover {
+  background: var(--light-blue);
+  color: var(--secondary-color);
+}
+
+/* ===========================================
+   ✨ EMPTY DAY
+=========================================== */
+.cal-empty {
+  background: transparent !important;
+  cursor: default;
+}
+
+.cal-empty:hover {
+  background: transparent !important;
+}
+
+/* ===========================================
+   ✨ TODAY HIGHLIGHT (Beautiful Blue Gradient)
+=========================================== */
+.cal-today {
+  background: linear-gradient(135deg, var(--secondary-color), var(--accent-color)) !important;
+  color: var(--white) !important;
+  font-weight: 700;
+  border: 1px solid var(--secondary-color);
+  transform: scale(1.05);
+  border-radius: 50% !important;
+  box-shadow: var(--shadow);
+}
+
+/* ===========================================
+   ✨ NAVIGATION BUTTON (Previous / Next)
+=========================================== */
+.cal-nav-btn {
+  @apply px-3 py-1 rounded-lg border shadow-sm 
+         hover:bg-blue-100 active:scale-95 transition-all duration-200;
+
+  background: var(--light-blue);
+  color: var(--secondary-color);
+  border-color: var(--border-color);
+}
+
+.cal-nav-btn:hover {
+  background: var(--lighter-blue);
+}
+
+/* ===========================================
+   ✨ GLOBAL RESET
+=========================================== */
+html, body { 
+  height: 100%;
+}
+
+body {
+  margin: 0; 
+  font-family: "Vazirmatn", Roboto, "Helvetica Neue", sans-serif; 
+  background: var(--lighter-blue);
+  color: var(--primary-color);
+}

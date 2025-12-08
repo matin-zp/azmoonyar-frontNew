@@ -1,0 +1,57 @@
+<header class="relative bg-gradient-to-r from-cyan-400 via-blue-600 to-indigo-400 text-white shadow-md">
+
+  <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between relative z-10">
+
+    <!-- عنوان سایت (سمت چپ) -->
+    <h1 class="text-2xl font-bold ml-4">استادیار</h1>
+
+    <!-- بخش راست: منو + دکمه پروفایل -->
+    <div class="flex items-center gap-8">
+
+      <!-- منوی اصلی -->
+      <nav class="hidden md:flex items-center gap-6">
+        
+        <a class="hover:text-yellow-200 cursor-pointer">درباره ما</a>
+        <a class="hover:text-yellow-200 cursor-pointer">تماس</a>
+        <a class="hover:text-yellow-200 cursor-pointer" (click)="onclickHome()">خانه</a>
+      </nav>
+
+      <!-- دکمه پروفایل PrimeNG -->
+      
+        <button pButton class="p-button-rounded p-button-text text-white hover:bg-blue-600 -mr-30"(click)="visibleSidebar = true"><i class="pi pi-bars" style="color: white"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- سایدبار PrimeNG -->
+<p-drawer [(visible)]="visibleSidebar" position="right" [baseZIndex]="10000">
+
+
+  <div class="flex flex-col gap-4 ">
+    <div class="flex items-center gap-4">
+      <i class="pi pi-user text-4xl"></i>
+      <div>
+        <p class="font-semibold">{{ profile.name }}</p>
+        <p class="text-gray-500">{{ profile.email }}</p>
+      </div>
+    </div>
+
+    <button pButton label="مشاهده پروفایل" class="p-button-info" (click)="onClickprofile()"></button>
+    <button pButton label="درس‌های من" class="p-button-info" (click)="onClickCorse()" ></button>
+    <button pButton label="ایجاد امتحان" class="p-button-info" (click)="onClickReservation()" ></button>
+    <button pButton label="خروج" class="p-button-danger"></button>
+  </div>
+
+</p-drawer >
+
+
+<router-outlet></router-outlet>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg w-auto m-auto">
+    <div class="flex justify-around p-4 h-15 ">
+     
+      <button pButton icon="pi pi-envelope"size="large" [rounded]="true" [text]="true" (click)="onClickTodo()" ></button>
+      
+      <button pButton  icon="pi pi-sign-in" size="large" [rounded]="true" [text]="true" (click)="onClickLogIn() "  ></button>
+    </div>
+  </nav>

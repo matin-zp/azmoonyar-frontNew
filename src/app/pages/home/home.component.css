@@ -1,0 +1,41 @@
+/* 🔵 رنگ‌بندی هفتگی */
+.week-color-1 td { background-color: #fde68a !important; } /* زرد */
+.week-color-2 td { background-color: #bfdbfe !important; } /* آبی */
+.week-color-3 td { background-color: #bbf7d0 !important; } /* سبز */
+
+/* ⛔ امتحان گذشته */
+.exam-past td {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* تقویم */
+.cal-today {
+  background-color: #2563eb !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.cal-empty {
+  background: transparent !important;
+  cursor: default;
+}
+
+.cal-nav-btn {
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid #93c5fd;
+  background: white;
+  color: #1d4ed8;
+  cursor: pointer;
+}
+
+.cal-nav-btn:hover { background: #e0f2fe; }
+
+/* گرد شدن جدول */
+table.rounded-xl,
+table.rounded-xl th,
+table.rounded-xl td {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}

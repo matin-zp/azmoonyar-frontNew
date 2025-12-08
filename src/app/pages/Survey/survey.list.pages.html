@@ -1,0 +1,60 @@
+<div class="p-4 max-w-5xl mx-auto">
+
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold ml-90">لیست نظرسنجی‌ها</h2>
+  </div>
+
+  <div *ngIf="surveys$ | async as surveys; else loading">
+
+    <ng-container *ngIf="surveys.length > 0; else noSurveys">
+
+      <div *ngFor="let s of surveys" class="mb-4">
+        
+        <div 
+          class="bg-white shadow-md rounded-xl p-4 transition-all duration-300 
+                 hover:bg-green-50 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+          (click)="openSurvey(s.id)">
+          <div class="flex justify-between items-start">
+
+            <!-- متن -->
+            <div>
+              <h3 class="text-lg font-semibold mb-1 text-gray-800">
+                {{ s.title }}
+              </h3>
+
+              <p class="text-sm text-gray-600" *ngIf="s.description">
+                {{ s.description }}
+              </p>
+            </div>
+
+            <!-- دکمه -->
+            <button
+              class="border border-green-600 text-green-600 px-4 py-1 rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-300 cursor-pointer"(click)="openSurvey(s.id); $event.stopPropagation()"
+              type="button"
+            >
+              مشاهده / رأی
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+    </ng-container>
+
+  </div>
+
+  <!-- دکمه ایجاد نظرسنجی -->
+  <button 
+    class="mt-4 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors duration-300 cursor-pointer"(click)="goToCreate()">
+    ایجاد نظرسنجی جدید</button>
+
+  <ng-template #loading>
+    <p>در حال بارگذاری...</p>
+  </ng-template>
+
+  <ng-template #noSurveys>
+    <p class="text-gray-600">هنوز هیچ نظرسنجی‌ای ثبت نشده است.</p>
+  </ng-template>
+
+</div>

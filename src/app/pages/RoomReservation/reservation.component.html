@@ -1,0 +1,96 @@
+<div class="reservations-container">
+  <div class="halls-grid">
+    <ng-container *ngFor="let room of roomList">
+      <div class="hall-card">
+        
+        <div class="circle">
+          <img [src]="
+            room === 'farabi' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMU39gGjLpuUXCok9HrASKK4QZQYgZNxyqpw&s' :
+            room === 'ferdowsi' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVdok9e5lq4WJOJH9GBUWEaEzFOCePZlrj7A&s' :
+            room === 'saadi' ? 'https://bonyadbidel.ir/wp-content/uploads/2025/04/photo_2025-04-21_16-54-23.jpg' :
+            room === 'hafez' ? 'https://www.beytoote.com/images/stories/economic/hhe129.jpg' :
+            room === 'khayyam' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3e6_wRZ-NPZKmzBm2jbWPG7bIxX8i5IDe7rkHaeolvvBXFhwqoMDm562-id0scyHX-CA&usqp=CAU' :
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuzBsIzbwPP51tC13VdemY5enR4jR6h2pjZw&s'
+          " />
+        </div>
+
+        <p class="hall-name">
+          {{
+            room === 'farabi' ? 'فارابی' :
+            room === 'ferdowsi' ? 'فردوسی' :
+            room === 'saadi' ? 'سعدی' :
+            room === 'hafez' ? 'حافظ' :
+            room === 'khayyam' ? 'خیام' : 'مولانا'
+          }}
+        </p>
+
+        <button 
+          pButton 
+          class="reserve-btn mt-5"
+          label="رزرو سالن"
+          severity="success"
+          (click)="showOverlay(room, $event)">
+        </button>
+
+        <p-overlay [visible]="overlayVisible[room]" appendTo="body">
+          <div class="overlay-panel calendar-panel">
+            <input 
+              class="lesson-input border p-1 w-100 mb-5 text-right rounded-md"
+              placeholder="نام امتحان"
+              [(ngModel)]="reservations[room].lessonName" />
+
+            <jalali-datepicker (dateSelected)="onDateSelected(room, $event)"></jalali-datepicker>
+
+            <div class="time-select mt-5">
+              <input type="time" class="ml-20" [(ngModel)]="reservations[room].startTime">
+              <input type="time" class="ml-10" [(ngModel)]="reservations[room].endTime">
+            </div>
+
+            <button pButton class="save-btn" label="ذخیره" (click)="saveDateTime(room)"></button>
+          </div>
+        </p-overlay>
+
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- TABLE -->
+  <div class="saved-list mb-30" *ngIf="savedReservations.length > 0">
+    <h3>📋 لیست رزروهای ثبت‌شده</h3>
+
+    <table class="reservation-table mt-10 border-separate border-spacing-y-4 border-spacing-x-4">
+      <thead>
+        <tr>
+          <th>شماره</th>
+          <th>نام امتحان</th>
+          <th>تاریخ</th>
+          <th>شروع</th>
+          <th>پایان</th>
+          <th>سالن</th>
+          <th>حذف</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let item of savedReservations; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.date }}</td>      <!-- شمسی -->
+          <td>{{ item.startTime }}</td>
+          <td>{{ item.endTime }}</td>
+          <td>{{ item.roomName }}</td>
+
+          <td>
+            <button 
+              pButton 
+              icon="pi pi-trash"
+              class="p-button-danger p-button-sm p-button-rounded"
+              (click)="deleteExam(item.id)">
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
