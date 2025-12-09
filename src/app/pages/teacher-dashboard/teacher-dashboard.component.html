@@ -2,19 +2,20 @@
   
   <!-- هدر با نام کاربر -->
   <div class="dashboard-header">
-    <div>
-      <h1>داشبورد استاد</h1>
-      <p>خوش آمدید استاد گرامی</p>
-    </div>
-    
     <div class="profile-info">
-      <div class="user-details">
-        <h3>{{ teacher.firstName }} {{ teacher.lastName }}</h3>
-        <p>{{ teacher.teacherCode }}</p>
-      </div>
       <div class="avatar-circle">
         {{ getTeacherAvatar() }}
       </div>
+      <div class="user-details">
+        <h3>{{ teacher.firstName }} {{ teacher.lastName }}</h3>
+        <p>{{ teacher.teacherCode }}</p>
+        <p class="user-email">{{ teacher.email }}</p>
+      </div>
+    </div>
+    
+    <div class="welcome-section">
+      <h1>داشبورد استاد</h1>
+      <p>خوش آمدید</p>
     </div>
   </div>
 
@@ -159,6 +160,8 @@
       </div>
       <button class="add-course-btn">+ افزودن درس</button>
     </div>
+    
+    
 
     <div class="courses-grid">
       <div

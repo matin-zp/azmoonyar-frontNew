@@ -11,6 +11,7 @@ interface Teacher {
   id: number;
   firstName: string;
   lastName: string;
+  email: string;
 }
 
 interface Student {
@@ -62,7 +63,7 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
   stats = {
     totalStudents: 0,
     totalExams: 0,
-    activeExams: 0,
+    todayExams: 0,
     upcomingExams: 0
   };
   
@@ -155,11 +156,18 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
     this.stats = {
       totalStudents: this.sortedStudents.length,
       totalExams: this.course.exams.length,
-      activeExams: this.course.exams.filter(exam => {
+      todayExams: this.course.exams.filter(exam => {
+        const nowDate = new Date();
+        nowDate.setHours(0, 0, 0, 0);   // فقط روز امروز
+
         const start = new Date(exam.startDate);
         const end = new Date(exam.endDate);
-        return now >= start && now <= end;
-      }).length,
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999); // پایان روز امتحان
+
+        return nowDate >= start && nowDate <= end;
+      }
+      ).length,
       upcomingExams: upcomingExams.length
     };
   }

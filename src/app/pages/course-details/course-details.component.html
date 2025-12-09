@@ -3,16 +3,17 @@
   <!-- هدر درس -->
   <div class="course-header-section">
     <div class="header-content">
-      <button class="back-btn" (click)="goBack()">← بازگشت</button>
       
       <div class="course-title">
         <h1>{{ course.courseName }}</h1>
         <div class="course-meta">
           <span class="course-code">{{ convertToPersianNumbers(course.courseCode) }}</span>
-          <span class="divider">•</span>
+          <span class="divider">|</span>
           <span class="course-teacher">استاد: {{ course.teacher.firstName }} {{ course.teacher.lastName }}</span>
         </div>
+        <span class="course-teacher"> {{ course.teacher.email }} </span>
       </div>
+      <button class="back-btn" (click)="goBack()">← بازگشت</button>
     </div>
     
     <div class="course-schedule">
@@ -52,8 +53,8 @@
     <div class="stat-card">
       <div class="stat-icon">🎯</div>
       <div class="stat-info">
-        <div class="stat-number">{{ convertToPersianNumbers(stats.activeExams.toString()) }}</div>
-        <div class="stat-label">امتحان فعال</div>
+        <div class="stat-number">{{ convertToPersianNumbers(stats.todayExams.toString()) }}</div>
+        <div class="stat-label">امتحان امروز</div>
       </div>
     </div>
     
@@ -104,7 +105,7 @@
   <!-- لیست دانشجویان (مرتب شده بر اساس نام خانوادگی) -->
   <div class="section-card">
     <div class="section-header">
-      <h2>👥 دانشجویان (مرتب شده بر اساس نام خانوادگی)</h2>
+      <h2>👥 دانشجویان </h2>
       <span class="section-badge">{{ convertToPersianNumbers(stats.totalStudents.toString()) }} نفر</span>
     </div>
     
@@ -120,12 +121,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let student of paginatedStudents; let i = index">
+          <tr *ngFor="let student of sortedStudents; let i = index">
             <td class="row-number">
-              {{ convertToPersianNumbers(((currentPage - 1) * studentsPerPage + i + 1).toString()) }}
+              {{ (i + 1).toString() }}
             </td>
             <td class="student-number">
-              {{ convertToPersianNumbers(student.studentNumber) }}
+              {{ student.studentNumber }}
             </td>
             <td class="student-name">
               {{ student.firstName }}
@@ -142,7 +143,7 @@
     </div>
     
     <!-- صفحه‌بندی -->
-    <div class="pagination" *ngIf="totalPages > 1">
+    <!-- <div class="pagination" *ngIf="totalPages > 1">
       <button 
         class="page-btn" 
         [disabled]="currentPage === 1"
@@ -169,7 +170,7 @@
       >
         بعدی ›
       </button>
-    </div>
+    </div> -->
   </div>
 
   <!-- همه امتحان‌ها -->

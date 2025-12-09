@@ -11,12 +11,13 @@ import { AuthService } from '../services/auth.service';
 import { CoursesService } from '../services/course.service';
 
 // مدل‌ها
-interface Teacher {
+interface Student {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
-  teacherCode: string;
+  studentNumber: string;
+  email?: string;
+  username: string;
   phone?: string;
   courses?: Course[];
 }
@@ -25,15 +26,17 @@ interface Course {
   id: string;
   courseCode: string;
   courseName: string;
-  unitCount: number;
+  unitCount?: number;
   students: Student[];
   exams: Exam[];
-}
-
-interface Student {
-  id: string;
-  name: string;
-  studentCode: string;
+  teacher: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  dayOfWeek?: string;
+  roomC?: string;
+  timeC?: string;
 }
 
 interface Exam {
@@ -48,6 +51,7 @@ interface Exam {
     capacity: number;
   };
   courseId?: string;
+  courseName?: string;
   status?: 'pending' | 'active' | 'completed' | 'cancelled';
 }
 
@@ -61,8 +65,9 @@ interface UpcomingExamView {
   endTime: string;
   startMillis: number;
   weekColor: number; // 0, 1, 2
-  courseName?: string;
-  courseCode?: string;
+  courseName: string;
+  courseCode: string;
+  teacherName: string;
   status?: string;
 }
 
@@ -74,6 +79,10 @@ interface CourseView {
   studentCount: number;
   examCount: number;
   unitCount: number;
+  teacherName: string;
+  dayOfWeek?: string;
+  roomC?: string;
+  timeC?: string;
 }
 
 interface TodayOverviewItem {
@@ -84,15 +93,15 @@ interface TodayOverviewItem {
 }
 
 @Component({
-  selector: 'app-teacher-dashboard',
+  selector: 'app-student-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
-  templateUrl: './teacher-dashboard.component.html',
-  styleUrls: ['./teacher-dashboard.component.css']
+  templateUrl: './student-dashboard.component.html',
+  styleUrls: ['./student-dashboard.component.css'] // استفاده از CSS مشابه
 })
-export class TeacherDashboardComponent implements OnInit, OnDestroy {
-  // اطلاعات استاد
-  teacher: Teacher | null = null;
+export class StudentDashboardComponent implements OnInit, OnDestroy {
+  // اطلاعات دانشجو
+  student: Student | null = null;
   
   // وضعیت‌های بارگذاری
   loading = true;
@@ -130,7 +139,7 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
     firstName: '',
     lastName: '',
     email: '',
-    teacherCode: '',
+    studentNumber: '',
     phone: ''
   };
   
@@ -166,35 +175,35 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
   private initDashboard(): void {
     this.setupTodayOverview();
     this.generateCalendar();
-    this.loadTeacherData();
+    this.loadStudentData();
   }
 
   /**
-   * تنظیم مرور امروز
+   * تنظیم مرور امروز برای دانشجو
    */
   private setupTodayOverview(): void {
     this.todayOverview = [
       {
         id: 1,
-        title: 'بررسی تکالیف ارسالی',
+        title: 'تکالیف امروز',
         icon: '📝',
         color: 'blue'
       },
       {
         id: 2,
-        title: 'پاسخ به سوالات دانشجویان',
-        icon: '💬',
+        title: 'جلسات کلاسی',
+        icon: '🎓',
         color: 'purple'
       },
       {
         id: 3,
-        title: 'آماده‌سازی مطالب جلسه بعد',
+        title: 'آمادگی برای امتحانات',
         icon: '📚',
         color: 'green'
       },
       {
         id: 4,
-        title: 'بررسی نمرات آخرین امتحان',
+        title: 'بررسی نمرات',
         icon: '📊',
         color: 'orange'
       }
@@ -202,23 +211,23 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * بارگذاری اطلاعات استاد
+   * بارگذاری اطلاعات دانشجو
    */
-  private loadTeacherData(): void {
+  private loadStudentData(): void {
     this.loading = true;
     
-    this.auth.getTeacherDashboard()
+    this.auth.getStudentDashboard()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          this.teacher = data;
-          this.setupTeacherData();
+          this.student = data;
+          this.setupStudentData();
           this.loadCourses();
           this.loadExamsFromApi();
           this.loading = false;
         },
         error: (err: any) => {
-          console.error('خطا در دریافت اطلاعات استاد:', err);
+          console.error('خطا در دریافت اطلاعات دانشجو:', err);
           this.errorMessage = 'خطا در بارگذاری اطلاعات پروفایل';
           this.loading = false;
         }
@@ -226,18 +235,18 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * تنظیم داده‌های استاد
+   * تنظیم داده‌های دانشجو
    */
-  private setupTeacherData(): void {
-    if (!this.teacher) return;
+  private setupStudentData(): void {
+    if (!this.student) return;
     
     // تنظیم مدل ویرایش
     this.editModel = {
-      firstName: this.teacher.firstName,
-      lastName: this.teacher.lastName,
-      email: this.teacher.email,
-      teacherCode: this.teacher.teacherCode,
-      phone: this.teacher.phone || ''
+      firstName: this.student.firstName,
+      lastName: this.student.lastName,
+      email: this.student.email || '',
+      studentNumber: this.student.studentNumber,
+      phone: this.student.phone || ''
     };
     
     // به‌روزرسانی مرور امروز با داده‌های واقعی
@@ -248,27 +257,28 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
    * به‌روزرسانی مرور امروز با داده‌های واقعی
    */
   private updateTodayOverviewWithRealData(): void {
-    if (!this.teacher?.courses) return;
+    if (!this.student?.courses) return;
     
-    const totalStudents = this.getTotalStudents();
-    const activeExams = this.getActiveExams();
+    const totalCourses = this.student.courses.length;
+    const upcomingExams = this.getUpcomingExamsCount();
+    const todayClasses = this.getTodayClassesCount();
     
     this.todayOverview = [
       {
         id: 1,
-        title: `${activeExams} امتحان فعال`,
-        icon: '📝',
+        title: `${todayClasses} کلاس امروز`,
+        icon: '🎓',
         color: 'blue'
       },
       {
         id: 2,
-        title: `${totalStudents} دانشجو`,
-        icon: '👥',
+        title: `${upcomingExams} امتحان پیش‌رو`,
+        icon: '📝',
         color: 'purple'
       },
       {
         id: 3,
-        title: `${this.teacher.courses.length} درس`,
+        title: `${totalCourses} درس`,
         icon: '📚',
         color: 'green'
       },
@@ -285,21 +295,25 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
    * بارگذاری درس‌ها
    */
   private loadCourses(): void {
-    if (!this.teacher?.courses) {
+    if (!this.student?.courses) {
       this.loadCoursesFromService();
       return;
     }
     
     this.loadingCourses = true;
     
-    // استفاده از داده‌های teacher
-    this.myCourses = this.teacher.courses.map(course => ({
-      id: course.id,
+    // استفاده از داده‌های student
+    this.myCourses = this.student.courses.map(course => ({
+      id: course.id.toString(),
       courseCode: course.courseCode,
       courseName: course.courseName,
       studentCount: course.students?.length || 0,
       examCount: course.exams?.length || 0,
-      unitCount: course.unitCount || 3
+      unitCount: course.unitCount || 3,
+      teacherName: `${course.teacher?.firstName || ''} ${course.teacher?.lastName || ''}`.trim(),
+      dayOfWeek: course.dayOfWeek || 'تعیین نشده',
+      roomC: course.roomC || 'تعیین نشده',
+      timeC: course.timeC || 'تعیین نشده'
     }));
     
     this.loadingCourses = false;
@@ -311,17 +325,21 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
   private loadCoursesFromService(): void {
     this.loadingCourses = true;
     
-    this.coursesService.getMyCourses()
+    this.coursesService.getStudentCourses()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (courses: any) => {
           this.myCourses = (courses || []).map((course: any) => ({
-            id: course.id,
+            id: course.id.toString(),
             courseCode: course.courseCode,
             courseName: course.courseName,
-            studentCount: course.students?.length || course.studentCount || 0,
-            examCount: course.exams?.length || course.examCount || 0,
-            unitCount: course.unitCount || 3
+            studentCount: course.students?.length || 0,
+            examCount: course.exams?.length || 0,
+            unitCount: course.unitCount || 3,
+            teacherName: `${course.teacher?.firstName || ''} ${course.teacher?.lastName || ''}`.trim(),
+            dayOfWeek: course.dayOfWeek || 'تعیین نشده',
+            roomC: course.roomC || 'تعیین نشده',
+            timeC: course.timeC || 'تعیین نشده'
           }));
           this.loadingCourses = false;
         },
@@ -365,7 +383,7 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
    * بارگذاری امتحان‌ها از داده‌های محلی
    */
   private loadExamsFromLocalData(): void {
-    if (!this.teacher?.courses) {
+    if (!this.student?.courses) {
       this.upcomingExams = [];
       this.updateVisibleExams();
       return;
@@ -373,7 +391,7 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
     
     this.upcomingExams = [];
     
-    this.teacher.courses.forEach(course => {
+    this.student.courses.forEach(course => {
       if (course.exams && course.exams.length > 0) {
         course.exams.forEach(exam => {
           this.upcomingExams.push(this.mapExamToView(exam, course));
@@ -401,14 +419,17 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
     const weekNumber = Math.floor((j.jd - 1) / 7);
     const weekColor = weekNumber % 3; // 0, 1, 2
     
-    // یافتن نام درس مرتبط (اگر courseId موجود باشد)
-    let courseName = '';
+    // یافتن نام درس مرتبط
+    let courseName = dto.courseName || '';
     let courseCode = '';
-    if (dto.courseId && this.teacher?.courses) {
-      const course = this.teacher.courses.find(c => c.id === dto.courseId);
+    let teacherName = '';
+    
+    if (dto.courseId && this.student?.courses) {
+      const course = this.student.courses.find(c => c.id.toString() === dto.courseId);
       if (course) {
         courseName = course.courseName;
         courseCode = course.courseCode;
+        teacherName = `${course.teacher?.firstName || ''} ${course.teacher?.lastName || ''}`.trim();
       }
     }
     
@@ -423,6 +444,7 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
       weekColor,
       courseName,
       courseCode,
+      teacherName,
       status: dto.status || 'pending'
     };
   }
@@ -454,6 +476,7 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
       weekColor,
       courseName: course.courseName,
       courseCode: course.courseCode,
+      teacherName: `${course.teacher?.firstName || ''} ${course.teacher?.lastName || ''}`.trim(),
       status: exam.status || 'pending'
     };
   }
@@ -553,23 +576,36 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * دریافت تعداد کل دانشجویان
+   * دریافت تعداد کلاس‌های امروز
    */
-  getTotalStudents(): number {
-    if (!this.teacher?.courses) return 0;
-    return this.teacher.courses.reduce((total, course) => 
-      total + (course.students?.length || 0), 0
-    );
+  getTodayClassesCount(): number {
+    if (!this.student?.courses) return 0;
+    
+    const today = new Date();
+    const todayDayOfWeek = this.daysOfWeek[today.getDay()];
+    
+    return this.student.courses.filter(course => 
+      course.dayOfWeek === todayDayOfWeek
+    ).length;
   }
 
   /**
-   * دریافت تعداد امتحان‌های فعال
+   * دریافت تعداد امتحان‌های پیش‌رو
    */
-  getActiveExams(): number {
-    if (!this.teacher?.courses) return 0;
-    return this.teacher.courses.reduce((total, course) => 
-      total + (course.exams?.filter(e => e.status === 'active').length || 0), 0
-    );
+  getUpcomingExamsCount(): number {
+    if (!this.student?.courses) return 0;
+    
+    let count = 0;
+    this.student.courses.forEach(course => {
+      if (course.exams) {
+        const now = new Date().getTime();
+        count += course.exams.filter(exam => {
+          const examDate = new Date(exam.startDate).getTime();
+          return examDate > now;
+        }).length;
+      }
+    });
+    return count;
   }
 
   /**
@@ -598,14 +634,14 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
    * باز کردن دیالوگ ویرایش
    */
   openEditDialog(): void {
-    if (!this.teacher) return;
+    if (!this.student) return;
     
     this.editModel = {
-      firstName: this.teacher.firstName,
-      lastName: this.teacher.lastName,
-      email: this.teacher.email,
-      teacherCode: this.teacher.teacherCode,
-      phone: this.teacher.phone || ''
+      firstName: this.student.firstName,
+      lastName: this.student.lastName,
+      email: this.student.email || '',
+      studentNumber: this.student.studentNumber,
+      phone: this.student.phone || ''
     };
     
     this.editDialogVisible = true;
@@ -615,14 +651,14 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
    * ذخیره تغییرات ویرایش
    */
   saveChanges(): void {
-    if (!this.teacher) return;
+    if (!this.student) return;
     
     // در حالت واقعی، اینجا درخواست API به سرور می‌زنیم
-    this.teacher.firstName = this.editModel.firstName;
-    this.teacher.lastName = this.editModel.lastName;
-    this.teacher.email = this.editModel.email;
-    this.teacher.teacherCode = this.editModel.teacherCode;
-    this.teacher.phone = this.editModel.phone;
+    this.student.firstName = this.editModel.firstName;
+    this.student.lastName = this.editModel.lastName;
+    this.student.email = this.editModel.email;
+    this.student.studentNumber = this.editModel.studentNumber;
+    this.student.phone = this.editModel.phone;
     
     console.log('تغییرات با موفقیت ذخیره شد');
     
@@ -642,15 +678,14 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
   logout(): void {
     // استفاده از متد logout در AuthService
     this.auth.logout();
-    // AuthService خودش ناوبری انجام میده (window.location.href = '/login')
   }
 
   /**
-   * دریافت آواتار استاد
+   * دریافت آواتار دانشجو
    */
-  getTeacherAvatar(): string {
-    if (!this.teacher) return '??';
-    return `${this.teacher.firstName[0]}${this.teacher.lastName[0]}`.toUpperCase();
+  getStudentAvatar(): string {
+    if (!this.student) return '??';
+    return `${this.student.firstName[0]}${this.student.lastName[0]}`.toUpperCase();
   }
 
   /**
@@ -679,5 +714,12 @@ export class TeacherDashboardComponent implements OnInit, OnDestroy {
    */
   navigateToExam(examId: number): void {
     this.router.navigate(['/exams', examId]);
+  }
+
+  /**
+   * دریافت نام استاد درس
+   */
+  getTeacherName(course: CourseView): string {
+    return course.teacherName || 'استاد تعیین نشده';
   }
 }

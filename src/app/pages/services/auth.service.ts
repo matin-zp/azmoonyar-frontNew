@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   // ================= Dashboard API =================
-  getDashboard(): Observable<any> {
+  getTeacherDashboard(): Observable<any> {
     const token = this.getToken();
 
     if (!token) {
@@ -54,11 +54,25 @@ export class AuthService {
     return this.http.get(`${this.baseUrl}/api/teachers/my-dashboard`, { headers });
   }
 
+  getStudentDashboard(): Observable<any> {
+    const token = this.getToken();
+
+    if (!token) {
+      console.warn("⛔ NO TOKEN FOUND → returning null observable");
+      return of(null);
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.baseUrl}/api/students/my-dashboard`, { headers });
+  }
   // ============================================
   //  ⚠️ سازگاری با نسخه‌های قدیمی
   // ============================================
-  getTeacherDashboard(): Observable<any> {
-    return this.getDashboard();
-  }
+  // getTeacherDashboard(): Observable<any> {
+  //   return this.getDashboard();
+  // }
 
 }

@@ -1,0 +1,1441 @@
+/* teacher-dashboard.component.css */
+
+/* ===== استایل پایه (کوچک‌تر شدن کلی) ===== */
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e6f2ff 0%, #d1e7ff 100%);
+  padding: 20px; /* کاهش از 28px */
+  font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  direction: rtl;
+  color: #000000;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== هدر با نام کاربر (کوچک‌تر) ===== */
+.dashboard-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px; /* کاهش از 20px */
+  padding: 24px; /* کاهش از 32px */
+  margin-bottom: 24px; /* کاهش از 36px */
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12); /* کاهش سایه */
+  border: 1.5px solid #93c5fd; /* کاهش ضخامت */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideDown 0.6s ease-out;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-header:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px); /* کاهش حرکت */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-header h1 {
+  font-size: 22px; /* کاهش از 28px */
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-header p {
+  color: #000000;
+  margin-top: 6px; /* کاهش */
+  font-size: 14px; /* کاهش از 17px */
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 18px; /* کاهش از 24px */
+}
+
+.avatar-circle {
+  width: 54px; /* کاهش از 64px */
+  height: 54px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa, #93c5fd);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px; /* کاهش از 24px */
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3); /* کاهش */
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.avatar-circle:hover {
+  transform: scale(1.08) rotate(5deg); /* کاهش انیمیشن */
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); } /* کاهش پالس */
+}
+
+.user-details h3 {
+  margin: 0;
+  color: #000000;
+  font-size: 18px; /* کاهش از 22px */
+  font-weight: 700;
+}
+
+.user-details p {
+  margin: 6px 0 0; /* کاهش */
+  color: #000000;
+  font-size: 13px; /* کاهش از 15px */
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* ===== ردیف اول: مرور امروز + تقویم ===== */
+.row-1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px; /* کاهش از 32px */
+  margin-bottom: 24px; /* کاهش از 36px */
+}
+
+@media (max-width: 768px) {
+  .row-1 {
+    grid-template-columns: 1fr;
+    gap: 18px; /* کاهش */
+  }
+}
+
+/* مرور امروز */
+.today-overview-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px; /* کاهش */
+  padding: 24px; /* کاهش از 32px */
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12); /* کاهش */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  transition: all 0.3s ease;
+  animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+.today-overview-card:hover {
+  transform: translateY(-3px); /* کاهش حرکت */
+  box-shadow: 0 8px 22px rgba(59, 130, 246, 0.2); /* کاهش */
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px); /* کاهش حرکت */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* کاهش از 18px */
+  margin-bottom: 20px; /* کاهش از 28px */
+  padding-bottom: 16px; /* کاهش از 20px */
+  border-bottom: 2px solid #3b82f6; /* کاهش ضخامت */
+}
+
+.card-header .icon-bar {
+  width: 5px; /* کاهش از 6px */
+  height: 26px; /* کاهش از 32px */
+  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+  border-radius: 2.5px; /* کاهش */
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.card-header h2 {
+  font-size: 20px; /* کاهش از 24px */
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+}
+
+.overview-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.overview-item {
+  display: flex;
+  align-items: center;
+  gap: 18px; /* کاهش از 24px */
+  padding: 18px; /* کاهش از 22px */
+  border-radius: 12px; /* کاهش از 16px */
+  margin-bottom: 14px; /* کاهش از 18px */
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border: 1.5px solid #93c5fd; /* کاهش */
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.overview-item:nth-child(1) { animation-delay: 0.1s; }
+.overview-item:nth-child(2) { animation-delay: 0.2s; }
+.overview-item:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px); /* کاهش حرکت */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overview-item:hover {
+  transform: translateX(-8px); /* کاهش حرکت */
+  border-color: #60a5fa;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.15); /* کاهش */
+}
+
+.overview-item::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px; /* کاهش از 6px */
+  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.overview-item:hover::before {
+  opacity: 1;
+}
+
+.item-number {
+  width: 36px; /* کاهش از 42px */
+  height: 36px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-radius: 10px; /* کاهش از 12px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px; /* کاهش از 18px */
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25); /* کاهش */
+  transition: transform 0.3s ease;
+}
+
+.overview-item:hover .item-number {
+  transform: scale(1.08) rotate(360deg); /* کاهش انیمیشن */
+}
+
+.overview-item span {
+  color: #000000;
+  font-size: 16px; /* کاهش از 18px */
+  font-weight: 600;
+  flex-grow: 1;
+}
+
+/* تقویم شمسی */
+.calendar-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px; /* کاهش */
+  padding: 24px; /* کاهش از 32px */
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12); /* کاهش */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  transition: all 0.3s ease;
+  animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+.calendar-card:hover {
+  transform: translateY(-3px); /* کاهش حرکت */
+  box-shadow: 0 8px 22px rgba(59, 130, 246, 0.2); /* کاهش */
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px; /* کاهش از 32px */
+  flex-wrap: wrap;
+  gap: 16px; /* کاهش از 20px */
+  padding-bottom: 18px; /* کاهش از 24px */
+  border-bottom: 2px solid #93c5fd; /* کاهش ضخامت */
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 10px; /* کاهش از 14px */
+}
+
+.cal-nav-btn {
+  padding: 10px 18px; /* کاهش از 12px 22px */
+  border-radius: 10px; /* کاهش از 12px */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+  color: #000000;
+  font-weight: 600;
+  font-size: 13px; /* کاهش از 15px */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.08); /* کاهش */
+}
+
+.cal-nav-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25); /* کاهش */
+}
+
+.calendar-title {
+  text-align: center;
+}
+
+.month-name {
+  font-size: 22px; /* کاهش از 28px */
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.year-text {
+  font-size: 18px; /* کاهش از 22px */
+  color: #000000;
+  font-weight: 600;
+  margin-top: 6px; /* کاهش */
+  opacity: 0.9;
+}
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 18px; /* کاهش از 24px */
+  padding: 12px 0; /* کاهش از 16px 0 */
+  border-bottom: 1.5px solid #93c5fd; /* کاهش */
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border-radius: 10px; /* کاهش از 12px */
+}
+
+.week-days div {
+  padding: 8px; /* کاهش از 10px */
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px; /* کاهش از 12px */
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px; /* کاهش از 12px */
+  font-weight: 600;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border: 1.5px solid transparent; /* کاهش */
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.08); /* کاهش */
+}
+
+.cal-day:hover {
+  background: linear-gradient(135deg, #60a5fa, #93c5fd);
+  color: white;
+  border-color: #3b82f6;
+  transform: scale(1.08); /* کاهش از 1.1 */
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.25); /* کاهش */
+}
+
+.cal-today {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+  color: white !important;
+  font-weight: 800;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3) !important; /* کاهش */
+  animation: bounce 0.5s;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); } /* کاهش */
+}
+
+.cal-empty {
+  background: transparent !important;
+  cursor: default;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.cal-empty:hover {
+  background: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ===== امتحان‌های پیش‌رو ===== */
+.exams-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px; /* کاهش */
+  padding: 24px; /* کاهش از 32px */
+  margin-bottom: 24px; /* کاهش از 36px */
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12); /* کاهش */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  animation: slideUp 0.6s ease-out 0.6s both;
+}
+
+.exams-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(59, 130, 246, 0.2); /* کاهش */
+}
+
+.exams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px; /* کاهش از 32px */
+  padding-bottom: 18px; /* کاهش از 24px */
+  border-bottom: 2px solid #3b82f6; /* کاهش ضخامت */
+}
+
+.exams-title {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* کاهش از 18px */
+}
+
+.exams-title .icon-bar {
+  width: 5px; /* کاهش از 6px */
+  height: 26px; /* کاهش از 32px */
+  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+  border-radius: 2.5px; /* کاهش */
+  animation: shimmer 2s infinite;
+}
+
+.exams-title h2 {
+  font-size: 20px; /* کاهش از 24px */
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+}
+
+.exams-count {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  color: #000000;
+  padding: 8px 16px; /* کاهش از 10px 20px */
+  border-radius: 20px; /* کاهش از 25px */
+  font-size: 14px; /* کاهش از 16px */
+  font-weight: 700;
+  border: 1.5px solid #93c5fd; /* کاهش */
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15); /* کاهش */
+}
+
+/* ===== جدول ساده‌شده امتحانات ===== */
+/* ===------------------------------------------------------------== جدول تمیز امتحانات ===== */
+.exams-table-clean {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  background: transparent;
+}
+
+.exams-table-clean thead {
+  background: transparent;
+}
+
+.exams-table-clean th {
+  padding: 16px 20px;
+  text-align: right;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.exams-table-clean th:first-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.exams-table-clean th:last-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.exams-table-clean td {
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.exams-table-clean td:first-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-left: none;
+  padding-right: 20px;
+}
+
+.exams-table-clean td:last-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-right: none;
+  padding-left: 20px;
+}
+
+.exams-table-clean td:not(:first-child):not(:last-child) {
+  border-left: none;
+  border-right: none;
+}
+
+/* ردیف امتحان */
+.exam-row-clean {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.exam-row-clean:hover {
+  transform: translateY(-2px);
+}
+
+.exam-row-clean:hover td {
+  background: #ffffff;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* کارت امتحان */
+.exam-card-clean {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0;
+}
+
+.exam-icon-clean {
+  width: 44px;
+  height: 44px;
+  background: #3b82f6;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.exam-row-clean:hover .exam-icon-clean {
+  transform: rotate(5deg) scale(1.05);
+  background: #2563eb;
+}
+
+.exam-info-clean {
+  flex: 1;
+}
+
+.exam-title-clean {
+  font-weight: 600;
+  color: #111827;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.exam-subtitle-clean {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  border: 1px solid #dbeafe;
+}
+
+/* کارت تاریخ */
+.date-card-clean {
+  padding: 18px 0;
+  text-align: center;
+  min-width: 110px;
+}
+
+.date-day-clean {
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.date-number-clean {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 16px;
+  background: #f3f4f6;
+  padding: 8px;
+  border-radius: 8px;
+  display: inline-block;
+  min-width: 70px;
+  border: 1px solid #d1d5db;
+}
+
+/* کارت زمان */
+.time-container-clean {
+  padding: 18px 0;
+  text-align: center;
+}
+
+.time-slot-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.exam-row-clean:hover .time-slot-clean {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.time-icon-clean {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.time-value-clean {
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+}
+
+/* کارت سالن */
+.room-card-clean {
+  padding: 18px 0;
+  text-align: center;
+}
+
+.room-card-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fefce8;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #fde68a;
+  transition: all 0.2s ease;
+}
+
+.exam-row-clean:hover .room-card-clean {
+  background: #fef3c7;
+}
+
+.room-icon-clean {
+  color: #d97706;
+  font-size: 14px;
+}
+
+.room-name-clean {
+  font-weight: 600;
+  color: #92400e;
+  font-size: 13px;
+}
+
+/* وضعیت */
+.status-container-clean {
+  padding: 18px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.status-indicator-clean {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-indicator-active-clean {
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.status-indicator-pending-clean {
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.status-indicator-completed-clean {
+  background: #6b7280;
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+}
+
+.status-text-clean {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.status-text-active-clean {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.status-text-pending-clean {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.status-text-completed-clean {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+/* امتحانات گذشته */
+.exam-past-clean td {
+  opacity: 0.6;
+  background: #f9fafb;
+}
+
+.exam-past-clean .exam-icon-clean {
+  background: #9ca3af;
+  box-shadow: none;
+}
+
+.exam-past-clean .exam-title-clean,
+.exam-past-clean .date-number-clean,
+.exam-past-clean .time-value-clean,
+.exam-past-clean .room-name-clean {
+  color: #6b7280;
+  text-decoration: line-through;
+}
+
+.exam-past-clean .exam-subtitle-clean {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.exam-past-clean .date-number-clean {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.exam-past-clean .time-slot-clean,
+.exam-past-clean .room-card-clean {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.exam-past-clean .room-card-clean {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.exam-past-clean .room-icon-clean {
+  color: #6b7280;
+}
+
+/* رنگ‌های هفته (خط کناری اولین ستون) */
+.week-color-0 td:first-child {
+  border-right: 3px solid #fdfeff;
+}
+
+.week-color-1 td:first-child {
+  border-right: 3px solid #fdfeff;
+}
+
+.week-color-2 td:first-child {
+  border-right: 3px solid #fdfeff;
+}
+
+/* ریسپانسیو */
+@media (max-width: 1024px) {
+  .exams-table-clean {
+    display: block;
+    overflow-x: auto;
+    border-spacing: 0 8px;
+  }
+  
+  .exams-table-clean th,
+  .exams-table-clean td {
+    min-width: 160px;
+  }
+  
+  .exam-card-clean {
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .exams-table-clean th {
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  
+  .exam-card-clean {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .exam-icon-clean {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  
+  .date-card-clean,
+  .time-container-clean,
+  .room-card-clean,
+  .status-container-clean {
+    padding: 14px 0;
+  }
+  
+  .date-number-clean {
+    font-size: 14px;
+    min-width: 60px;
+    padding: 6px;
+  }
+  
+  .time-slot-clean,
+  .room-card-clean {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .status-text-clean {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  
+  .exam-title-clean {
+    font-size: 14px;
+  }
+  
+  .exam-subtitle-clean {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+}
+
+/* انیمیشن ورود */
+.exam-row-clean {
+  animation: fadeIn 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* تأخیر انیمیشن برای ردیف‌ها */
+.exam-row-clean:nth-child(1) { animation-delay: 0.05s; }
+.exam-row-clean:nth-child(2) { animation-delay: 0.1s; }
+.exam-row-clean:nth-child(3) { animation-delay: 0.15s; }
+.exam-row-clean:nth-child(4) { animation-delay: 0.2s; }
+.exam-row-clean:nth-child(5) { animation-delay: 0.25s; }
+
+/* استایل‌های پایین جدول (با رنگ‌های ساده‌تر) */
+.exams-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.show-more-btn {
+  padding: 8px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-more-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.no-exams {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-exams-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.7;
+  color: #6b7280;
+}
+
+.no-exams p {
+  color: #374151;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.create-exam-btn {
+  padding: 10px 24px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.create-exam-btn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+/* ===== درس‌های من (کوچک‌تر) ==--------------------------------------------------------------=== */
+.courses-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px; /* کاهش */
+  padding: 24px; /* کاهش از 32px */
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12); /* کاهش */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  animation: slideUp 0.6s ease-out 0.8s both;
+}
+
+.courses-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(59, 130, 246, 0.2); /* کاهش */
+}
+
+.courses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px; /* کاهش از 32px */
+  padding-bottom: 18px; /* کاهش از 24px */
+  border-bottom: 2px solid #60a5fa; /* کاهش ضخامت */
+}
+
+.courses-title {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* کاهش از 18px */
+}
+
+.courses-title .icon-bar {
+  width: 5px; /* کاهش از 6px */
+  height: 26px; /* کاهش از 32px */
+  background: linear-gradient(to bottom, #60a5fa, #93c5fd);
+  border-radius: 2.5px; /* کاهش */
+  animation: shimmer 2s infinite;
+}
+
+.courses-title h2 {
+  font-size: 20px; /* کاهش از 24px */
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+}
+
+.add-course-btn {
+  padding: 10px 22px; /* کاهش از 14px 28px */
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  color: #000000;
+  border: 1.5px solid #93c5fd; /* کاهش */
+  border-radius: 10px; /* کاهش از 14px */
+  font-weight: 700;
+  font-size: 14px; /* کاهش از 16px */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15); /* کاهش */
+  display: flex;
+  align-items: center;
+  gap: 8px; /* کاهش از 12px */
+}
+
+.add-course-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-color: #3b82f6;
+  transform: translateY(-2px) scale(1.03); /* کاهش انیمیشن */
+  box-shadow: 0 5px 12px rgba(59, 130, 246, 0.25); /* کاهش */
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); /* کاهش از 320px */
+  gap: 20px; /* کاهش از 28px */
+}
+
+.course-item {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 12px; /* کاهش از 16px */
+  padding: 20px; /* کاهش از 28px */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.12); /* کاهش */
+}
+
+.course-item:hover {
+  transform: translateY(-5px) scale(1.02); /* کاهش حرکت */
+  box-shadow: 0 10px 22px rgba(59, 130, 246, 0.25); /* کاهش */
+  border-color: #60a5fa;
+}
+
+.course-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px; /* کاهش از 6px */
+  background: linear-gradient(to right, #3b82f6, #60a5fa, #93c5fd);
+  animation: gradientMove 3s infinite linear;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px; /* کاهش از 24px */
+}
+
+.course-icon {
+  width: 48px; /* کاهش از 56px */
+  height: 48px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border-radius: 10px; /* کاهش از 14px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  font-size: 20px; /* کاهش از 24px */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  transition: all 0.3s ease;
+}
+
+.course-item:hover .course-icon {
+  transform: rotate(8deg) scale(1.08); /* کاهش انیمیشن */
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+}
+
+.course-code {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  color: #000000;
+  padding: 6px 12px; /* کاهش از 8px 16px */
+  border-radius: 20px; /* کاهش از 25px */
+  font-size: 12px; /* کاهش از 14px */
+  font-weight: 700;
+  border: 1.5px solid #93c5fd; /* کاهش */
+}
+
+.course-name {
+  font-size: 18px; /* کاهش از 22px */
+  font-weight: 800;
+  color: #000000;
+  margin-bottom: 18px; /* کاهش از 24px */
+  line-height: 1.4;
+}
+
+.course-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px; /* کاهش از 24px */
+  padding-top: 18px; /* کاهش از 24px */
+  border-top: 2px solid #e6f2ff; /* کاهش ضخامت */
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* کاهش از 12px */
+  color: #000000;
+  font-size: 14px; /* کاهش از 16px */
+  font-weight: 600;
+}
+
+/* ===== لودینگ ===== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.98);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  direction: rtl;
+}
+
+.loading-content {
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  padding: 40px; /* کاهش از 56px */
+  border-radius: 16px; /* کاهش از 20px */
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2); /* کاهش */
+  border: 1.5px solid #93c5fd; /* کاهش */
+  animation: pulse 2s infinite;
+}
+
+.spinner {
+  width: 60px; /* کاهش از 80px */
+  height: 60px;
+  border: 3px solid #e6f2ff; /* کاهش */
+  border-top: 3px solid #3b82f6;
+  border-right: 3px solid #60a5fa;
+  border-bottom: 3px solid #93c5fd;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 24px; /* کاهش از 32px */
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #000000;
+  font-size: 18px; /* کاهش از 22px */
+  font-weight: 700;
+}
+
+/* ===== کلاس‌های رنگ هفته (پس‌زمینهٔ ردیف‌ها → یکدست #fdfeff) ===== */
+.week-color-0 td {
+  background: #fdfeff !important;
+}
+
+.week-color-1 td {
+  background: #fdfeff !important;
+}
+
+.week-color-2 td {
+  background: #fdfeff !important;
+}
+
+.exam-past td {
+  text-decoration: line-through;
+  opacity: 0.6; /* کاهش */
+}
+
+.exam-past .status-badge-simple {
+  opacity: 0.7; /* کاهش */
+}
+
+/* ===== ریسپانسیو (بهبود) ===== */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px; /* کاهش از 20px */
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px; /* کاهش از 24px */
+    padding: 20px; /* کاهش از 28px */
+  }
+  
+  .profile-info {
+    align-self: flex-start;
+  }
+  
+  .exams-table-simple {
+    display: block;
+    overflow-x: auto;
+    font-size: 14px;
+  }
+  
+  .exams-table-simple th,
+  .exams-table-simple td {
+    white-space: nowrap;
+    padding: 14px; /* کاهش از 18px */
+  }
+  
+  .exams-footer {
+    flex-direction: column;
+    gap: 18px; /* کاهش از 24px */
+  }
+  
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .row-1 {
+    gap: 18px; /* کاهش از 24px */
+  }
+  
+  .today-overview-card,
+  .calendar-card,
+  .exams-card,
+  .courses-card {
+    padding: 20px; /* کاهش از 24px */
+  }
+  
+  .card-header h2,
+  .exams-title h2,
+  .courses-title h2 {
+    font-size: 18px; /* کاهش از 22px */
+  }
+  
+  .month-name {
+    font-size: 20px; /* کاهش از 22px */
+  }
+  
+  .year-text {
+    font-size: 16px; /* کاهش از 18px */
+  }
+}
+
+@media (max-width: 480px) {
+  .row-1 {
+    grid-template-columns: 1fr;
+  }
+  
+  .cal-nav-btn {
+    padding: 8px 12px; /* کاهش بیشتر */
+    font-size: 12px;
+  }
+  
+  .calendar-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .course-stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* اسکرول بار سفارشی */
+.exams-table-simple::-webkit-scrollbar {
+  height: 8px; /* کاهش از 10px */
+}
+
+.exams-table-simple::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border-radius: 4px; /* کاهش */
+}
+
+.exams-table-simple::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #60a5fa, #93c5fd);
+  border-radius: 4px; /* کاهش */
+  border: 1px solid #f0f7ff; /* کاهش */
+}
+
+.exams-table-simple::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+}
+
+/* انیمیشن‌های اضافی */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); } /* کاهش حرکت */
+}
+
+.floating-element {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* افکت‌های نور */
+.light-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.light-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%, /* کاهش شفافیت */
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+}
+
+/* بهبود برای موبایل */
+@media (max-width: 768px) {
+  .dashboard-header h1 {
+    font-size: 20px;
+  }
+  
+  .exams-table-simple th,
+  .exams-table-simple td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  
+  .status-badge-simple {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  
+  .time-badge-simple {
+    min-width: 70px;
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+  /* student-dashboard.component.css */
+/* می‌توانید از همان CSS استاد استفاده کنید یا این تغییرات جزئی را اعمال کنید */
+
+/* تغییر عنوان‌ها در بخش‌های مختلف */
+.dashboard-header h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #3b82f6, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* رنگ آواتار برای دانشجو */
+.avatar-circle {
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, #10b981, #34d399, #6ee7b7); /* رنگ سبز برای دانشجو */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+/* تغییر رنگ برخی عناصر به سبز */
+.card-header .icon-bar,
+.exams-title .icon-bar,
+.courses-title .icon-bar {
+  background: linear-gradient(to bottom, #10b981, #34d399) !important;
+}
+
+/* رنگ دکمه‌ها */
+.show-more-btn,
+.add-course-btn:hover {
+  background: #10b981 !important;
+}
+
+.show-more-btn:hover,
+.add-course-btn:hover {
+  background: #059669 !important;
+}
+
+/* رنگ border برای کارت‌ها */
+.dashboard-header,
+.today-overview-card,
+.calendar-card,
+.exams-card,
+.courses-card {
+  border-color: #6ee7b7 !important;
+}
+
+/* تغییر رنگ hover برای دانشجو */
+.overview-item:hover,
+.course-item:hover,
+.cal-day:hover {
+  border-color: #34d399 !important;
+}
+}
