@@ -21,6 +21,7 @@ export const routes: Routes = [
       import('./pages/teacher-dashboard/teacher-dashboard.component')
         .then(c => c.TeacherDashboardComponent)
   },
+  // TEACHER DASHBOARD
   {
     path: 'student-dashboard',
     loadComponent: () =>
@@ -34,7 +35,13 @@ export const routes: Routes = [
       import('./pages/course-details/course-details.component')
         .then(c => c.CourseDetailsComponent)
   },
-
+  // app.routes.ts - به این صورت اصلاح کنید:
+  {
+    path: 'course/:courseId/new-exam',
+    loadComponent: () =>
+      import('./pages/exam-reservation/exam-reservation.component')
+        .then(m => m.ExamReservationComponent)
+  },
   // NAVBAR LAYOUT
   {
     path: '',

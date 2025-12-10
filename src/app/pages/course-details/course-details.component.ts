@@ -361,4 +361,13 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
     const persianDigits = '۰۱۲۳۴۵۶۷۸۹';//تبدیلم نکردی اشکالی نداره
     return text.replace(/\d/g, d => persianDigits[parseInt(d)]);
   }
+  /**
+ * ناوبری به صفحه رزرو امتحان
+ */
+navigateToExamReservation(): void {
+  if (this.courseId) {
+    this.router.navigate(['/course', this.courseId, 'new-exam']);
+  }
+}
+
 }

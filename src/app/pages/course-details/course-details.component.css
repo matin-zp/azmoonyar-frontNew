@@ -682,4 +682,118 @@
     flex-direction: column;
     gap: 8px;
   }
+  /* ===== بخش دکمه‌های درس ===== */
+.course-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #e6f2ff;
+}
+
+.reserve-exam-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.reserve-exam-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+/* اگر از RouterModule استفاده نمی‌کنید و دکمه با click کار می‌کند: */
+.reserve-exam-btn.clickable {
+  cursor: pointer;
+}
+
+/* برای ریسپانسیو */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .course-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .reserve-exam-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+/* ===== بخش دکمه‌های درس ===== */
+.course-actions {
+  display: flex;
+  gap: 12px;
+  margin-left: 16px;
+}
+
+.reserve-exam-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.reserve-exam-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+/* یا اگر می‌خواهید در بخش پایین قرار دهید: */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #e6f2ff;
+}
+
+/* برای ریسپانسیو */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .course-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .reserve-exam-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
 }

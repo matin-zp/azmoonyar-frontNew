@@ -1,0 +1,238 @@
+<div class="exam-reservation-container" *ngIf="!loading; else loadingTpl">
+  
+  <!-- هدر صفحه -->
+  <div class="reservation-header-section">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← بازگشت به درس</button>
+      <div class="page-title">
+        <h1>رزرو امتحان جدید</h1>
+        <p>برای درس انتخاب شده، امتحان جدید رزرو کنید</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- پیام‌های موفقیت و خطا -->
+  <div *ngIf="successMessage" class="success-message">
+    ✅ {{ successMessage }}
+  </div>
+  
+  <div *ngIf="errorMessage" class="error-message">
+    ❌ {{ errorMessage }}
+  </div>
+
+  <!-- ردیف اول: تقویم + فرم -->
+  <div class="row-1">
+    <!-- تقویم شمسی -->
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <div class="calendar-nav">
+          <button class="cal-nav-btn" (click)="prevYear()">« سال قبل</button>
+          <button class="cal-nav-btn" (click)="prevMonth()">‹ ماه قبل</button>
+        </div>
+        
+        <div class="calendar-title">
+          <h3 class="month-name">{{ monthName }}</h3>
+          <div class="year-text">{{ currentYear }}</div>
+        </div>
+        
+        <div class="calendar-nav">
+          <button class="cal-nav-btn" (click)="nextMonth()">ماه بعد ›</button>
+          <button class="cal-nav-btn" (click)="nextYear()">سال بعد »</button>
+        </div>
+      </div>
+
+      <div class="week-days">
+        <div *ngFor="let day of daysOfWeek">{{ day }}</div>
+      </div>
+
+      <div class="calendar-grid">
+        <div
+          *ngFor="let day of calendarGrid"
+          class="cal-day"
+          [ngClass]="{
+            'cal-today': day.isToday,
+            'cal-selected': day.isSelected,
+            'cal-empty': day.day === null
+          }"
+          (click)="day.gregorianDate && onDateSelect(day.gregorianDate)"
+        >
+          {{ day.day ?? '' }}
+        </div>
+      </div>
+      
+      <div *ngIf="selectedDate" class="selected-date-info">
+        <div class="selected-date-label">تاریخ انتخاب شده:</div>
+        <div class="selected-date-value">
+          {{ getPersianDay(selectedDate) }}، {{ selectedJalaaliDate }}
+        </div>
+      </div>
+    </div>
+
+    <!-- فرم رزرو -->
+    <div class="reservation-form-card">
+      <div class="form-header">
+        <div class="icon-bar"></div>
+        <h2>اطلاعات رزرو</h2>
+      </div>
+      
+      <div class="form-body">
+        <!-- نام امتحان -->
+        <div class="form-group">
+          <label for="examName">نام امتحان *</label>
+          <input
+            type="text"
+            id="examName"
+            [(ngModel)]="examName"
+            placeholder="مثال: آزمون میان‌ترم ریاضی"
+            [ngClass]="{ 'input-error': examNameError }"
+          />
+          <div *ngIf="examNameError" class="error-text">{{ examNameError }}</div>
+        </div>
+        
+        <!-- زمان شروع -->
+        <div class="form-group">
+          <label>زمان شروع *</label>
+          <div class="time-selector">
+            <select [(ngModel)]="selectedStartTime" (change)="onStartTimeChange(selectedStartTime)">
+              <option *ngFor="let slot of timeSlots" [value]="slot.display" [disabled]="slot.disabled">
+                {{ slot.display }}
+              </option>
+            </select>
+            <span class="time-icon">⏰</span>
+          </div>
+        </div>
+        
+        <!-- زمان پایان -->
+        <div class="form-group">
+          <label>زمان پایان *</label>
+          <div class="time-selector">
+            <select [(ngModel)]="selectedEndTime" (change)="onEndTimeChange(selectedEndTime)">
+              <option *ngFor="let slot of timeSlots" [value]="slot.display">
+                {{ slot.display }}
+              </option>
+            </select>
+            <span class="time-icon">⏰</span>
+          </div>
+        </div>
+        <!-- مدت زمان -->
+        <div class="form-group">
+            <label>مدت زمان</label>
+            <div class="duration-display">
+                <span class="duration-value">{{ calculateDuration() }}</span>
+                <span class="duration-unit">دقیقه</span>
+            </div>
+        </div>
+        
+        <!-- انتخاب سالن -->
+        <div class="form-group">
+          <label>انتخاب سالن *</label>
+          <div class="room-grid">
+            <div
+              *ngFor="let room of allRooms"
+              class="room-card"
+              [ngClass]="{ 'room-selected': selectedRoomId === room.id.toString() }"
+              (click)="onRoomSelect(room.id.toString())"
+            >
+              <div class="room-icon">🏫</div>
+              <div class="room-info">
+                <div class="room-name">{{ room.name }}</div>
+                <div class="room-capacity">ظرفیت: {{ room.capacity }} نفر</div>
+              </div>
+              <div *ngIf="selectedRoomId === room.id.toString()" class="room-check">✓</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- وضعیت دسترسی سالن -->
+        <div *ngIf="selectedRoomId && selectedDate" class="room-availability-status">
+          <div *ngIf="isRoomAvailableForSelectedTime()" class="availability-available">
+            ✅ سالن در این بازه زمانی در دسترس است
+          </div>
+          <div *ngIf="!isRoomAvailableForSelectedTime()" class="availability-busy">
+            ❌ سالن در این بازه زمانی اشغال است
+          </div>
+        </div>
+        
+        <!-- دکمه ثبت -->
+        <div class="form-actions">
+          <button
+            class="submit-btn"
+            (click)="submitReservation()"
+            [disabled]="submitting || !isRoomAvailableForSelectedTime()"
+          >
+            <span *ngIf="submitting" class="spinner-small"></span>
+            {{ submitting ? 'در حال ثبت...' : 'ثبت رزرو' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- جدول وضعیت سالن‌ها -->
+  <div class="availability-table-card">
+    <div class="table-header">
+      <div class="icon-bar"></div>
+      <h2>وضعیت سالن‌ها در تاریخ انتخاب شده</h2>
+      <div *ngIf="selectedDate" class="table-date">
+        {{ selectedJalaaliDate }}
+      </div>
+    </div>
+    
+    <div *ngIf="!selectedDate" class="no-date-selected">
+      <div class="no-date-icon">📅</div>
+      <p>لطفاً ابتدا تاریخ را از تقویم انتخاب کنید</p>
+    </div>
+    
+    <div *ngIf="selectedDate" class="availability-table-container">
+      <div class="time-header">
+        <div class="room-header-cell">سالن / زمان</div>
+        <div *ngFor="let slot of roomAvailabilities[0]?.availability || []" class="time-cell">
+          {{ slot.startTime }}
+        </div>
+      </div>
+      
+      <div class="table-body">
+        <div *ngFor="let roomAvailability of roomAvailabilities" class="room-row">
+          <div class="room-cell">
+            <div class="room-cell-name">{{ roomAvailability.room.name }}</div>
+            <div class="room-cell-capacity">{{ roomAvailability.room.capacity }} نفر</div>
+          </div>
+          
+          <div
+  *ngFor="let slot of roomAvailability.availability"
+  class="slot-cell"
+  [ngClass]="{
+    'slot-available': slot.isAvailable,
+    'slot-busy': !slot.isAvailable
+  }"
+  [title]="getSlotTitle(slot)"
+>
+  {{ slot.isAvailable ? '✓' : '✗' }}
+</div>
+        </div>
+      </div>
+      
+      <div class="table-legend">
+        <div class="legend-item">
+          <div class="legend-color legend-available"></div>
+          <span>خالی</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-busy"></div>
+          <span>اشغال</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- لودینگ -->
+<ng-template #loadingTpl>
+  <div class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p class="loading-text">در حال بارگذاری اطلاعات...</p>
+    </div>
+  </div>
+</ng-template>

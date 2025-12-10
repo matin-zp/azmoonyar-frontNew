@@ -1,0 +1,881 @@
+/* exam-reservation.component.css */
+
+/* ===== استایل پایه ===== */
+.exam-reservation-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e6f2ff 0%, #d1e7ff 100%);
+  padding: 20px;
+  font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  direction: rtl;
+  color: #000000;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== هدر صفحه ===== */
+.reservation-header-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12);
+  border: 1.5px solid #93c5fd;
+  animation: slideDown 0.6s ease-out;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  color: #000000;
+  border: 1.5px solid #93c5fd;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15);
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  transform: translateX(-5px);
+}
+
+.page-title h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #000000;
+  margin: 0 0 8px 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.page-title p {
+  color: #000000;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* ===== پیام‌ها ===== */
+.success-message {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  padding: 16px 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1.5px solid #10b981;
+  font-weight: 600;
+  animation: slideDown 0.3s ease-out;
+}
+
+.error-message {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  padding: 16px 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1.5px solid #ef4444;
+  font-weight: 600;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* ===== ردیف اول: تقویم + فرم ===== */
+.row-1 {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .row-1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== تقویم شمسی ===== */
+.calendar-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12);
+  border: 1.5px solid #93c5fd;
+  transition: all 0.3s ease;
+  animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+.calendar-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(59, 130, 246, 0.2);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #93c5fd;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.cal-nav-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1.5px solid #93c5fd;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+  color: #000000;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.08);
+}
+
+.cal-nav-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+}
+
+.calendar-title {
+  text-align: center;
+}
+
+.month-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.year-text {
+  font-size: 18px;
+  color: #000000;
+  font-weight: 600;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 18px;
+  padding: 12px 0;
+  border-bottom: 1.5px solid #93c5fd;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border-radius: 10px;
+}
+
+.week-days div {
+  padding: 8px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border: 1.5px solid transparent;
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.08);
+}
+
+.cal-day:hover {
+  background: linear-gradient(135deg, #60a5fa, #93c5fd);
+  color: white;
+  border-color: #3b82f6;
+  transform: scale(1.08);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.25);
+}
+
+.cal-today {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+  color: white !important;
+  font-weight: 800;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3) !important;
+}
+
+.cal-selected {
+  background: linear-gradient(135deg, #10b981, #34d399) !important;
+  color: white !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.cal-empty {
+  background: transparent !important;
+  cursor: default;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.selected-date-info {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid #e6f2ff;
+  text-align: center;
+}
+
+.selected-date-label {
+  font-size: 14px;
+  color: #000000;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.selected-date-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* ===== فرم رزرو ===== */
+.reservation-form-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12);
+  border: 1.5px solid #93c5fd;
+  animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #3b82f6;
+}
+
+.form-header .icon-bar {
+  width: 5px;
+  height: 26px;
+  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+  border-radius: 2.5px;
+  animation: shimmer 2s infinite;
+}
+
+.form-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+}
+
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  border: 1.5px solid #93c5fd;
+  border-radius: 10px;
+  font-size: 15px;
+  background: white;
+  transition: all 0.3s ease;
+  font-family: 'Vazirmatn', sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group input.input-error {
+  border-color: #ef4444;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #dc2626;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.time-selector {
+  position: relative;
+}
+
+.time-selector select {
+  width: 100%;
+  padding-right: 50px;
+}
+
+.time-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+.duration-display {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #93c5fd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.duration-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.duration-unit {
+  font-size: 14px;
+  color: #000000;
+  opacity: 0.8;
+}
+
+/* ===== شبکه سالن‌ها ===== */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.room-card {
+  background: linear-gradient(135deg, #f8fbff 0%, #edf4ff 100%);
+  border: 1.5px solid #93c5fd;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.room-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.room-card.room-selected {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #3b82f6;
+}
+
+.room-icon {
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #93c5fd;
+}
+
+.room-selected .room-icon {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-color: #3b82f6;
+}
+
+.room-info {
+  flex: 1;
+}
+
+.room-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.room-capacity {
+  font-size: 13px;
+  color: #000000;
+  opacity: 0.8;
+}
+
+.room-check {
+  color: #10b981;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* ===== وضعیت دسترسی ===== */
+.room-availability-status {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.availability-available {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1.5px solid #10b981;
+}
+
+.availability-busy {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  border: 1.5px solid #ef4444;
+}
+
+/* ===== دکمه‌های فرم ===== */
+.form-actions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #e6f2ff;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  position: relative;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner-small {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+/* ===== جدول وضعیت سالن‌ها ===== */
+.availability-table-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12);
+  border: 1.5px solid #93c5fd;
+  animation: slideUp 0.6s ease-out 0.6s both;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #60a5fa;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.table-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #000000;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-header .icon-bar {
+  width: 5px;
+  height: 26px;
+  background: linear-gradient(to bottom, #60a5fa, #93c5fd);
+  border-radius: 2.5px;
+}
+
+.table-date {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  color: #000000;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1.5px solid #93c5fd;
+}
+
+.no-date-selected {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.no-date-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-date-selected p {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===== ساختار جدول ===== */
+.availability-table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.time-header {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 8px 8px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.room-header-cell {
+  min-width: 180px;
+  padding: 16px;
+  font-weight: 700;
+  color: #374151;
+  background: #f3f4f6;
+  border-left: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+}
+
+.time-cell {
+  min-width: 80px;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 13px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-body {
+  border: 2px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.room-row {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.room-row:last-child {
+  border-bottom: none;
+}
+
+.room-cell {
+  min-width: 180px;
+  padding: 16px;
+  background: #f9fafb;
+  border-left: 2px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.room-cell-name {
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.room-cell-capacity {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.slot-cell {
+  min-width: 80px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: default;
+  transition: all 0.2s ease;
+  border-left: 1px solid #f0f0f0;
+}
+
+.slot-available {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.slot-busy {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.slot-cell:hover {
+  transform: scale(1.05);
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== راهنمای جدول ===== */
+.table-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+}
+
+.legend-available {
+  background: #d1fae5;
+}
+
+.legend-busy {
+  background: #fee2e2;
+}
+
+/* ===== لودینگ ===== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.98);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  direction: rtl;
+}
+
+.loading-content {
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+  border: 1.5px solid #93c5fd;
+  animation: pulse 2s infinite;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 3px solid #e6f2ff;
+  border-top: 3px solid #3b82f6;
+  border-right: 3px solid #60a5fa;
+  border-bottom: 3px solid #93c5fd;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 24px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ===== انیمیشن‌ها ===== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* ===== ریسپانسیو ===== */
+@media (max-width: 768px) {
+  .exam-reservation-container {
+    padding: 16px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .calendar-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .calendar-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .room-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .time-header,
+  .room-row {
+    display: block;
+  }
+  
+  .room-header-cell,
+  .time-cell,
+  .room-cell,
+  .slot-cell {
+    min-width: 100%;
+    text-align: right;
+  }
+  
+  .slot-cell {
+    height: 40px;
+    display: inline-block;
+    width: 50px;
+    margin: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .row-1 {
+    gap: 16px;
+  }
+  
+  .calendar-card,
+  .reservation-form-card,
+  .availability-table-card {
+    padding: 20px;
+  }
+  
+  .cal-nav-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .month-name {
+    font-size: 20px;
+  }
+  
+  .year-text {
+    font-size: 16px;
+  }
+}
