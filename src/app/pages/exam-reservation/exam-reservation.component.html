@@ -1,15 +1,21 @@
 <div class="exam-reservation-container" *ngIf="!loading; else loadingTpl">
   
   <!-- هدر صفحه -->
-  <div class="reservation-header-section">
-    <div class="header-content">
-      <button class="back-btn" (click)="goBack()">← بازگشت به درس</button>
-      <div class="page-title">
-        <h1>رزرو امتحان جدید</h1>
-        <p>برای درس انتخاب شده، امتحان جدید رزرو کنید</p>
-      </div>
+  <!-- در بخش هدر صفحه -->
+<div class="reservation-header-section">
+  <div class="header-content">
+    <button class="back-btn" (click)="goBack()">← بازگشت به درس</button>
+    <div class="page-title">
+      <h1>رزرو امتحان جدید</h1>
+      <p>برای درس انتخاب شده، امتحان جدید رزرو کنید</p>
     </div>
+    
+    <!-- دکمه رفرش -->
+    <button class="refresh-btn" (click)="forceRefresh()" [disabled]="loading">
+      🔄 بروزرسانی
+    </button>
   </div>
+</div>
 
   <!-- پیام‌های موفقیت و خطا -->
   <div *ngIf="successMessage" class="success-message">

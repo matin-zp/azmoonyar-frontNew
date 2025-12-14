@@ -179,25 +179,74 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
     });
   }
 
+  // private loadExams(): Promise<void> {
+  //   this.loadingExams = true;
+  //   return new Promise((resolve, reject) => {
+  //     this.http.get<Exam[]>(this.examsApi)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (exams) => {
+  //           this.allExams = exams;
+  //           this.loadingExams = false;
+  //           resolve();
+  //         },
+  //         error: (err) => {
+  //           console.error('خطا در دریافت امتحان‌ها:', err);
+  //           this.loadingExams = false;
+  //           reject(err);
+  //         }
+  //       });
+  //   });
+  // }
   private loadExams(): Promise<void> {
-    this.loadingExams = true;
-    return new Promise((resolve, reject) => {
-      this.http.get<Exam[]>(this.examsApi)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (exams) => {
-            this.allExams = exams;
-            this.loadingExams = false;
-            resolve();
-          },
-          error: (err) => {
-            console.error('خطا در دریافت امتحان‌ها:', err);
-            this.loadingExams = false;
-            reject(err);
-          }
-        });
+  this.loadingExams = true;
+  return new Promise((resolve, reject) => {
+    // اضافه کردن timestamp برای جلوگیری از caching
+    const timestamp = new Date().getTime();
+    const url = `${this.examsApi}?t=${timestamp}`;
+    
+    this.http.get<Exam[]>(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (exams) => {
+          console.log('📥 امتحان‌های دریافتی از سرور:', exams);
+          this.allExams = exams;
+          this.loadingExams = false;
+          resolve();
+        },
+        error: (err) => {
+          console.error('خطا در دریافت امتحان‌ها:', err);
+          this.loadingExams = false;
+          reject(err);
+        }
+      });
+  });
+}
+
+private refreshExams(): void {
+  console.log('🔄 بارگذاری مجدد امتحان‌ها...');
+  
+  // اضافه کردن timestamp برای جلوگیری از caching
+  const timestamp = new Date().getTime();
+  const url = `${this.examsApi}?t=${timestamp}`;
+  
+  this.http.get<Exam[]>(url)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (exams) => {
+        console.log('✅ امتحان‌ها با موفقیت refresh شدند:', exams);
+        this.allExams = exams;
+        
+        // مجدداً وضعیت سالن‌ها را محاسبه کن
+        if (this.selectedDate) {
+          this.calculateRoomAvailabilities();
+        }
+      },
+      error: (err) => {
+        console.error('❌ خطا در refresh امتحان‌ها:', err);
+      }
     });
-  }
+}
 
   private initializeRoomAvailabilities(): void {
     this.roomAvailabilities = this.allRooms.map(room => ({
@@ -352,79 +401,123 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
   /**
    * محاسبه زمان‌های خالی سالن‌ها برای تاریخ انتخاب شده
    */
-  private calculateRoomAvailabilities(): void {
-    if (!this.selectedDate) return;
-    
-    // تبدیل تاریخ انتخاب شده به تاریخ ISO (بدون زمان)
-    const selectedDateStr = this.selectedDate.toISOString().split('T')[0];
-    
-    // فیلتر کردن امتحان‌های این تاریخ
-    const examsOnSelectedDate = this.allExams.filter(exam => {
-      const examDate = new Date(exam.startDate).toISOString().split('T')[0];
-      return examDate === selectedDateStr;
-    });
-    
-    // برای هر سالن، زمان‌های خالی را محاسبه می‌کنیم
-    this.roomAvailabilities.forEach(roomAvailability => {
-      const roomExams = examsOnSelectedDate.filter(exam => exam.room.id === roomAvailability.room.id);
+/**
+ * محاسبه زمان‌های خالی سالن‌ها برای تاریخ انتخاب شده
+ */
+private calculateRoomAvailabilities(): void {
+  if (!this.selectedDate) return;
+  
+  console.log('📅 تاریخ انتخاب شده:', this.selectedDate);
+  
+  // گرفتن سال، ماه و روز تاریخ انتخاب شده
+  const selectedYear = this.selectedDate.getFullYear();
+  const selectedMonth = this.selectedDate.getMonth() + 1;
+  const selectedDay = this.selectedDate.getDate();
+  
+  console.log(`📅 تاریخ: ${selectedYear}/${selectedMonth}/${selectedDay}`);
+  
+  // برای هر سالن، زمان‌های خالی را محاسبه می‌کنیم
+  this.roomAvailabilities.forEach(roomAvailability => {
+    const roomExams = this.allExams.filter(exam => {
+      // فیلتر امتحان‌های این سالن
+      if (exam.room.id !== roomAvailability.room.id) return false;
       
-      // تولید زمان‌های نیم‌ساعته از ۸ صبح تا ۸ شب
-      roomAvailability.availability = [];
+      // بررسی تاریخ امتحان
+      const examStart = new Date(exam.startDate);
+      const examYear = examStart.getFullYear();
+      const examMonth = examStart.getMonth() + 1;
+      const examDay = examStart.getDate();
       
-      for (let hour = 8; hour < 20; hour++) {
-        for (let minute of [0, 30]) {
-          const startTime = `${this.pad(hour)}:${this.pad(minute)}`;
-          let endHour = hour;
-          let endMinute = minute + 30;
-          
-          if (endMinute === 60) {
-            endHour++;
-            endMinute = 0;
-          }
-          
-          const endTime = `${this.pad(endHour)}:${this.pad(endMinute)}`;
-          const timeSlot = `${startTime}-${endTime}`;
-          
-          // بررسی آیا این بازه زمانی با امتحانی تداخل دارد
-          let isAvailable = true;
-          let conflictingExam = '';
-          
-          for (const exam of roomExams) {
-            const examStart = new Date(exam.startDate);
-            const examEnd = new Date(exam.endDate);
-            
-            const slotStart = new Date(this.selectedDate!);
-            const [startHourStr, startMinuteStr] = startTime.split(':');
-            slotStart.setHours(parseInt(startHourStr), parseInt(startMinuteStr), 0, 0);
-            
-            const slotEnd = new Date(this.selectedDate!);
-            const [endHourStr, endMinuteStr] = endTime.split(':');
-            slotEnd.setHours(parseInt(endHourStr), parseInt(endMinuteStr), 0, 0);
-            
-            // بررسی تداخل زمانی
-            if (
-              (slotStart >= examStart && slotStart < examEnd) ||
-              (slotEnd > examStart && slotEnd <= examEnd) ||
-              (slotStart <= examStart && slotEnd >= examEnd)
-            ) {
-              isAvailable = false;
-              conflictingExam = exam.name;
-              break;
-            }
-          }
-          
-          roomAvailability.availability.push({
-            time: timeSlot,
-            startTime,
-            endTime,
-            isAvailable,
-            examName: conflictingExam
-          });
-        }
+      const isSameDate = (
+        examYear === selectedYear &&
+        examMonth === selectedMonth &&
+        examDay === selectedDay
+      );
+      
+      if (isSameDate) {
+        console.log(`🏫 سالن ${roomAvailability.room.name}: امتحان "${exam.name}"`);
+        console.log(`   شروع: ${exam.startDate} (${examStart.toString()})`);
+        console.log(`   پایان: ${exam.endDate}`);
       }
+      
+      return isSameDate;
     });
-  }
-
+    
+    console.log(`🏫 سالن ${roomAvailability.room.name}: ${roomExams.length} امتحان`);
+    
+    // تولید زمان‌های نیم‌ساعته از ۸ صبح تا ۸ شب
+    roomAvailability.availability = [];
+    
+    for (let hour = 8; hour < 20; hour++) {
+      for (let minute of [0, 30]) {
+        const startTime = `${this.pad(hour)}:${this.pad(minute)}`;
+        let endHour = hour;
+        let endMinute = minute + 30;
+        
+        if (endMinute === 60) {
+          endHour++;
+          endMinute = 0;
+        }
+        
+        const endTime = `${this.pad(endHour)}:${this.pad(endMinute)}`;
+        
+        // ایجاد زمان‌های بازه (به صورت محلی)
+        const slotStart = this.createLocalDate(selectedYear, selectedMonth, selectedDay, hour, minute);
+        const slotEnd = this.createLocalDate(selectedYear, selectedMonth, selectedDay, endHour, endMinute);
+        
+        console.log(`⏰ بررسی بازه ${startTime}-${endTime}:`);
+        console.log(`   Slot Start: ${slotStart.toString()}`);
+        console.log(`   Slot End: ${slotEnd.toString()}`);
+        
+        // بررسی آیا این بازه زمانی با امتحانی تداخل دارد
+        let isAvailable = true;
+        let conflictingExam = '';
+        
+        for (const exam of roomExams) {
+          const examStart = new Date(exam.startDate);
+          const examEnd = new Date(exam.endDate);
+          
+          console.log(`   📝 بررسی تداخل با "${exam.name}":`);
+          console.log(`      Exam Start: ${examStart.toString()}`);
+          console.log(`      Exam End: ${examEnd.toString()}`);
+          
+          // بررسی تداخل زمانی
+          const hasOverlap = (
+            (slotStart >= examStart && slotStart < examEnd) ||
+            (slotEnd > examStart && slotEnd <= examEnd) ||
+            (slotStart <= examStart && slotEnd >= examEnd)
+          );
+          
+          if (hasOverlap) {
+            isAvailable = false;
+            conflictingExam = exam.name;
+            console.log(`      ❌ تداخل یافت!`);
+            break;
+          } else {
+            console.log(`      ✅ بدون تداخل`);
+          }
+        }
+        
+        roomAvailability.availability.push({
+          time: `${startTime}-${endTime}`,
+          startTime,
+          endTime,
+          isAvailable,
+          examName: conflictingExam
+        });
+        
+        console.log(`   نتیجه: ${isAvailable ? 'خالی' : 'اشغال'} ${conflictingExam ? '(' + conflictingExam + ')' : ''}`);
+        console.log('---');
+      }
+    }
+    
+    // لاگ برای دیباگ
+    const busySlots = roomAvailability.availability.filter(slot => !slot.isAvailable);
+    console.log(`🏫 سالن ${roomAvailability.room.name}: ${busySlots.length} بازه اشغال`);
+  });
+  
+  console.log('✅ محاسبه وضعیت سالن‌ها کامل شد');
+}
   /**
    * تغییر ماه در تقویم
    */
@@ -550,71 +643,173 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
     
     return true;
   }
+  /**
+   * بارگذاری مجدد امتحان‌ها
+   */
+  // private refreshExams(): void {
+  //   console.log('🔄 بارگذاری مجدد امتحان‌ها...');
+    
+  //   this.http.get<Exam[]>(this.examsApi)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (exams) => {
+  //         this.allExams = exams;
+  //         console.log('✅ امتحان‌ها با موفقیت refresh شدند. تعداد:', exams.length);
+          
+  //         // اگر تاریخ انتخاب شده‌ای داریم، وضعیت سالن‌ها را مجدد محاسبه کن
+  //         if (this.selectedDate) {
+  //           this.calculateRoomAvailabilities();
+  //         }
+  //       },
+  //       error: (err) => {
+  //         console.error('❌ خطا در refresh امتحان‌ها:', err);
+  //       }
+  //     });
+  // }
 
   /**
    * ارسال فرم رزرو
    */
-  submitReservation(): void {
-    // اعتبارسنجی
-    if (!this.validateForm()) {
-      return;
-    }
-    
-    if (!this.selectedDate || !this.selectedRoomId) {
-      this.errorMessage = 'لطفاً تاریخ و سالن را انتخاب کنید';
-      return;
-    }
-    
-    // بررسی در دسترس بودن سالن
-    if (!this.isRoomAvailableForSelectedTime()) {
-      this.errorMessage = 'سالن انتخاب شده در این بازه زمانی در دسترس نیست';
-      return;
-    }
-    
-    this.submitting = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-    
-    // ساخت تاریخ‌های ISO
-    const [startHour, startMinute] = this.selectedStartTime.split(':').map(Number);
-    const [endHour, endMinute] = this.selectedEndTime.split(':').map(Number);
-    
-    const startDate = new Date(this.selectedDate);
-    startDate.setHours(startHour, startMinute, 0, 0);
-    
-    const endDate = new Date(this.selectedDate);
-    endDate.setHours(endHour, endMinute, 0, 0);
-    
-    // ساخت درخواست
-    const reservationRequest: ExamReservationRequest = {
-      name: this.examName,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      course: this.courseId,
-      room: this.selectedRoomId
-    };
-    
-    // ارسال درخواست
-    this.http.post(this.examsApi, reservationRequest)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          console.log('رزرو با موفقیت ثبت شد:', response);
-          this.successMessage = 'رزرو امتحان با موفقیت ثبت شد!';
-          this.submitting = false;
-          
-          // ریست فرم
-          setTimeout(() => {
-            this.resetForm();
-          }, 3000);
-        },
-        error: (err) => {
-          console.error('خطا در ثبت رزرو:', err);
-          this.errorMessage = err.error?.message || 'خطا در ثبت رزرو';
-          this.submitting = false;
-        }
-      });
+  /**
+ * ارسال فرم رزرو
+ */
+/**
+ * ارسال فرم رزرو (نسخه آزمایشی برای debug)
+ */
+submitReservation(): void {
+  // اعتبارسنجی
+  if (!this.validateForm()) {
+    return;
   }
+  
+  if (!this.selectedDate || !this.selectedRoomId) {
+    this.errorMessage = 'لطفاً تاریخ و سالن را انتخاب کنید';
+    return;
+  }
+  
+  // بررسی در دسترس بودن سالن
+  if (!this.isRoomAvailableForSelectedTime()) {
+    this.errorMessage = 'سالن انتخاب شده در این بازه زمانی در دسترس نیست';
+    return;
+  }
+  
+  this.submitting = true;
+  this.errorMessage = '';
+  this.successMessage = '';
+  
+  // ساخت تاریخ‌های ISO با زمان محلی
+  const [startHour, startMinute] = this.selectedStartTime.split(':').map(Number);
+  const [endHour, endMinute] = this.selectedEndTime.split(':').map(Number);
+  
+  // گرفتن سال، ماه و روز از تاریخ انتخاب شده
+  const year = this.selectedDate.getFullYear();
+  const month = this.selectedDate.getMonth() + 1;
+  const day = this.selectedDate.getDate();
+  
+  console.log('📅 اطلاعات زمان:');
+  console.log('   سال:', year, 'ماه:', month, 'روز:', day);
+  console.log('   شروع:', startHour, ':', startMinute);
+  console.log('   پایان:', endHour, ':', endMinute);
+  
+  // تست روش‌های مختلف:
+  
+  // روش ۱: ایجاد تاریخ با زمان محلی
+  const startDateMethod1 = new Date(year, month - 1, day, startHour, startMinute, 0, 0);
+  const endDateMethod1 = new Date(year, month - 1, day, endHour, endMinute, 0, 0);
+  
+  // روش ۲: ایجاد رشته ISO دستی
+  const isoStart = `${year}-${this.pad(month)}-${this.pad(day)}T${this.pad(startHour)}:${this.pad(startMinute)}:00`;
+  const isoEnd = `${year}-${this.pad(month)}-${this.pad(day)}T${this.pad(endHour)}:${this.pad(endMinute)}:00`;
+  
+  console.log('🧪 تست روش‌های مختلف:');
+  console.log('   روش ۱ - new Date():', startDateMethod1.toString());
+  console.log('   روش ۱ - ISO:', startDateMethod1.toISOString());
+  console.log('   روش ۲ - رشته دستی:', isoStart);
+  
+  // ساخت درخواست - تست با هر دو روش
+  const reservationRequest: ExamReservationRequest = {
+    name: this.examName,
+    startDate: isoStart, // روش ۲: رشته ISO دستی
+    endDate: isoEnd,     // روش ۲: رشته ISO دستی
+    course: this.courseId,
+    room: this.selectedRoomId
+  };
+  
+  console.log('📤 ارسال درخواست رزرو:', reservationRequest);
+  
+  // ارسال درخواست
+  this.http.post(this.examsApi, reservationRequest)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        console.log('✅ پاسخ سرور:', response);
+        
+        // اگر سرور امتحان ایجاد شده را برمی‌گرداند، آن را به لیست اضافه کن
+        if (response && response.id) {
+          const newExam: Exam = {
+            id: response.id,
+            name: response.name || this.examName,
+            startDate: response.startDate || isoStart,
+            endDate: response.endDate || isoEnd,
+            room: response.room || {
+              id: parseInt(this.selectedRoomId),
+              name: this.allRooms.find(r => r.id.toString() === this.selectedRoomId)?.name || 'نامشخص',
+              capacity: this.allRooms.find(r => r.id.toString() === this.selectedRoomId)?.capacity || 0
+            }
+          };
+          
+          console.log('➕ اضافه کردن امتحان جدید به لیست محلی:', newExam);
+          this.allExams.push(newExam);
+        }
+        
+        this.successMessage = 'رزرو امتحان با موفقیت ثبت شد!';
+        this.submitting = false;
+        
+        // ۱. بارگذاری مجدد امتحان‌ها از سرور
+        this.refreshExams();
+        
+        // ۲. مجدداً وضعیت سالن‌ها را محاسبه کن
+        if (this.selectedDate) {
+          console.log('🔄 محاسبه مجدد وضعیت سالن‌ها...');
+          this.calculateRoomAvailabilities();
+        }
+      },
+      error: (err) => {
+        console.error('❌ خطا در ثبت رزرو:', err);
+        this.errorMessage = err.error?.message || 'خطا در ثبت رزرو';
+        this.submitting = false;
+      }
+    });
+} 
+
+/**
+ * رفرش اجباری داده‌ها
+ */
+forceRefresh(): void {
+  console.log('🔄 رفرش اجباری داده‌ها...');
+  
+  this.loading = true;
+  this.errorMessage = '';
+  
+  // بارگذاری مجدد همه داده‌ها
+  Promise.all([
+    this.loadRooms(),
+    this.loadExams()
+  ]).then(() => {
+    this.loading = false;
+    
+    // اگر تاریخ انتخاب شده‌ای داریم، وضعیت سالن‌ها را مجدد محاسبه کن
+    if (this.selectedDate) {
+      this.calculateRoomAvailabilities();
+    }
+    
+    console.log('✅ رفرش اجباری کامل شد');
+  }).catch(err => {
+    console.error('❌ خطا در رفرش اجباری:', err);
+    this.errorMessage = 'خطا در بروزرسانی اطلاعات';
+    this.loading = false;
+  });
+}
 
   /**
    * اعتبارسنجی فرم
@@ -710,5 +905,48 @@ getSlotTitle(slot: any): string {
   } else {
     return slot.examName ? `اشغال: ${slot.examName}` : 'اشغال';
   }
+}
+/**
+ * ساخت Date با زمان محلی (بدون تبدیل به UTC)
+ */
+private createLocalDate(year: number, month: number, day: number, hour: number, minute: number): Date {
+  // روش ۱: استفاده از Date constructor با پارامترهای جداگانه
+  // این روش زمان محلی را در نظر می‌گیرد
+  return new Date(year, month - 1, day, hour, minute, 0, 0);
+}
+
+/**
+ * تبدیل Date به ISO string با حفظ ساعت محلی
+ */
+private toLocalISOString(date: Date): string {
+  // این روش ساعت محلی را حفظ می‌کند
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
+  
+  return `${year}-${this.pad(month)}-${this.pad(day)}T${this.pad(hour)}:${this.pad(minute)}:${this.pad(second)}`;
+}
+
+/**
+ * متد جایگزین: استفاده از UTC اما با offset ایران
+ */
+private createDateWithIranTimezone(year: number, month: number, day: number, hour: number, minute: number): Date {
+  // ایران UTC+3:30 است (در حالت عادی)
+  // این تابع تاریخ را با در نظر گرفتن offset ایران می‌سازد
+  const date = new Date(Date.UTC(year, month - 1, day, hour - 3, minute - 30, 0));
+  return date;
+}
+
+/**
+ * تبدیل به ISO با offset ایران
+ */
+private toISOWithIranTimezone(date: Date): string {
+  // اضافه کردن ۳:۳۰ ساعت برای ایران
+  const iranOffset = 3.5 * 60 * 60 * 1000; // ۳.۵ ساعت به میلی‌ثانیه
+  const utcDate = new Date(date.getTime() + iranOffset);
+  return utcDate.toISOString();
 }
 }
