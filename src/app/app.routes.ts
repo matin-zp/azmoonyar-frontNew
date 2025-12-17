@@ -1,5 +1,3 @@
-// [file name]: app.routes.ts
-// [file content begin]
 import { Routes } from '@angular/router';
 import { NavbarComponent } from './layouts/navbar-layout';
 
@@ -21,13 +19,15 @@ export const routes: Routes = [
       import('./pages/teacher-dashboard/teacher-dashboard.component')
         .then(c => c.TeacherDashboardComponent)
   },
-  // TEACHER DASHBOARD
+  
+  // STUDENT DASHBOARD
   {
     path: 'student-dashboard',
     loadComponent: () =>
       import('./pages/student-dashboard/student-dashboard.component')
         .then(c => c.StudentDashboardComponent)
   },
+  
   // COURSE DETAILS
   {
     path: 'courses/:id',
@@ -35,13 +35,23 @@ export const routes: Routes = [
       import('./pages/course-details/course-details.component')
         .then(c => c.CourseDetailsComponent)
   },
-  // app.routes.ts - به این صورت اصلاح کنید:
+  
+  // CREATE SURVEY (جدید)
+  {
+    path: 'course/:courseId/create-survey',
+    loadComponent: () =>
+      import('./pages/create-survey/create-survey.component')
+        .then(c => c.CreateSurveyComponent)
+  },
+  
+  // EXAM RESERVATION
   {
     path: 'course/:courseId/new-exam',
     loadComponent: () =>
       import('./pages/exam-reservation/exam-reservation.component')
         .then(m => m.ExamReservationComponent)
   },
+  
   // NAVBAR LAYOUT
   {
     path: '',
@@ -52,12 +62,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/home/home.routes').then(r => r.homeRoutes)
       },
-      // {
-      //   path: 'studentDashboard',
-      //   loadChildren: () =>
-      //     import('./pages/studentDashbord/studentDashbord.routes')
-      //       .then(r => r.studentDashboardRoutes)  // ← نام export صحیح باید این باشد
-      // },
       {
         path: 'profile',
         loadChildren: () =>
@@ -68,4 +72,3 @@ export const routes: Routes = [
 
   { path: '**', redirectTo: 'login' }
 ];
-// [file content end]

@@ -1,0 +1,130 @@
+<div class="create-survey-container" *ngIf="!loading; else loadingTpl">
+  
+  <!-- هدر صفحه -->
+  <div class="survey-header-section">
+    <div class="header-content">
+      <div class="page-title">
+        <h1>📝 ایجاد نظرسنجی جدید</h1>
+        <div class="page-subtitle">
+          شناسه درس: {{ convertToPersianNumbers(courseId || '') }}
+        </div>
+      </div>
+      <button class="back-btn" (click)="goBack()">← بازگشت به درس</button>
+    </div>
+  </div>
+
+  <!-- فرم ایجاد نظرسنجی -->
+  <div class="survey-form-card">
+    
+    <!-- عنوان نظرسنجی -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">📋</span>
+        عنوان نظرسنجی
+      </label>
+      <input 
+        type="text" 
+        class="form-input" 
+        [(ngModel)]="surveyData.title"
+        placeholder="مثال: کدام تاریخ برای امتحان مناسب‌تر است؟"
+        maxlength="200"
+        autocomplete="off"
+      >
+      <div class="form-hint" style="margin-top: 8px; font-size: 13px; color: #6b7280;">
+        یک عنوان واضح و توصیفی برای نظرسنجی وارد کنید (حداقل ۵ حرف)
+      </div>
+    </div>
+
+    <!-- گزینه‌های نظرسنجی -->
+    <div class="form-group">
+      <div class="options-section">
+        <div class="options-header">
+          <h3 class="options-title">📊 گزینه‌های نظرسنجی</h3>
+          <button class="add-option-btn" (click)="addOption()" type="button">
+            <span>+</span>
+            افزودن گزینه جدید
+          </button>
+        </div>
+
+        <div class="options-list">
+          <div 
+            *ngFor="let option of surveyData.options; let i = index; trackBy: trackByOptionId" 
+            class="option-item"
+          >
+            <div class="option-number">{{ convertToPersianNumbers((i + 1).toString()) }}</div>
+            <input 
+              type="text" 
+              class="option-input" 
+              [(ngModel)]="option.text"
+              [placeholder]="'گزینه ' + convertToPersianNumbers((i + 1).toString())"
+              maxlength="100"
+              autocomplete="off"
+            >
+            <button 
+              class="remove-option-btn"
+              (click)="removeOption(i)"
+              [disabled]="surveyData.options.length <= 2"
+              title="حذف این گزینه"
+              type="button"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <div class="form-hint" style="margin-top: 16px; font-size: 13px; color: #6b7280;">
+          • حداقل ۲ گزینه نیاز است<br>
+          • گزینه‌ها باید واضح و مختصر باشند (۲ تا ۱۰۰ حرف)<br>
+          • گزینه‌ها نباید تکراری باشند
+        </div>
+      </div>
+    </div>
+
+    <!-- دکمه‌های عملیات -->
+    <div class="form-actions">
+      <button class="cancel-btn" (click)="goBack()" type="button" [disabled]="loading">لغو</button>
+      <button 
+        class="submit-btn" 
+        (click)="submitSurvey()"
+        [disabled]="loading || isSubmitted"
+        type="button"
+      >
+        <span *ngIf="!loading">✅</span>
+        <span *ngIf="loading">⏳</span>
+        {{ loading ? 'در حال ایجاد...' : 'ایجاد نظرسنجی' }}
+      </button>
+    </div>
+
+    <!-- پیام خطا -->
+    <div *ngIf="errorMessage" class="message-container error-message">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span>⚠️</span>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </div>
+
+    <!-- پیام موفقیت -->
+    <div *ngIf="successMessage" class="message-container success-message">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span>🎉</span>
+        <div>
+          <strong>{{ successMessage }}</strong>
+          <div style="font-size: 14px; margin-top: 4px;">
+            در حال بازگشت به صفحه درس...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- لودینگ -->
+<ng-template #loadingTpl>
+  <div class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p class="loading-text">در حال ایجاد نظرسنجی...</p>
+    </div>
+  </div>
+</ng-template>

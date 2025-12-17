@@ -144,7 +144,16 @@
 <!-- بخش نظرسنجی‌ها (نسخه جدولی) -->
 <div class="section-card table-style" *ngIf="course?.surveys && course.surveys.length > 0">
   <div class="section-header">
-    <h2>📊 نظرسنجی‌ها</h2>
+    <div class="section-title-row">
+      <h2>📊 نظرسنجی‌ها</h2>
+      <!-- دکمه جدید اضافه شده -->
+      <button 
+        class="reserve-exam-btn small"
+        (click)="navigateToCreateSurvey()"
+      >
+        📝 ایجاد نظرسنجی جدید
+      </button>
+    </div>
     <span class="section-badge">{{ convertToPersianNumbers(course.surveys.length.toString()) }} نظرسنجی</span>
   </div>
   

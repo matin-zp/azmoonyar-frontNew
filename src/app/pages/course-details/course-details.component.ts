@@ -824,4 +824,11 @@ cancelVote(surveyId: number): void {
       this.router.navigate(['/course', this.courseId, 'new-exam']);
     }
   }
+  // این متد رو به کلاس اضافه کن
+navigateToCreateSurvey(): void {
+  if (this.courseId) {
+    this.router.navigate(['/course', this.courseId, 'create-survey']);
+  }
+}
+
 }
