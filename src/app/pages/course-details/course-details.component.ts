@@ -49,8 +49,8 @@ interface Survey {
   resultsCount: SurveyResult;
   totalVotes: number;
   userVote?: number; // ایندکس گزینه‌ای که کاربر انتخاب کرده
+  userCanVote?: boolean; // آیا کاربر می‌تونه رأی بده؟
 }
-
 interface CourseDetails {
   id: number;
   courseName: string;
@@ -69,7 +69,8 @@ interface CourseDetails {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: './course-details.component.html',
-  styleUrls: ['./course-details.component.css']
+  styleUrls: ['./course-details.component.css'],
+  
 })
 export class CourseDetailsComponent implements OnInit, OnDestroy {
   course: CourseDetails | null = null;
@@ -84,7 +85,8 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
   
   // برای ذخیره‌سازی خطاهای هر نظرسنجی
   surveyErrors: { [surveyId: number]: string } = {};
-  
+  selectedOptions: { [surveyId: number]: number } = {};
+  surveyError: string = '';
   // داده‌های آماری
   stats = {
     totalStudents: 0,
@@ -157,33 +159,66 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
    * بارگذاری جزئیات درس (بدون نیاز به توکن)
    */
   private loadCourseDetails(): void {
-    this.loading = true;
-    
-    // این درخواست عمومی است، نیازی به توکن ندارد
-    this.http.get<CourseDetails>(`http://localhost:8081/api/courses/${this.courseId}`)
-      .pipe(takeUntil(this.destroy$))
+  this.loading = true;
+  
+  this.http.get<CourseDetails>(`http://localhost:8081/api/courses/${this.courseId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.course = data;
+        this.sortStudentsByLastName();
+        this.calculateStats();
+        this.prepareUpcomingExams();
+        this.updateStudentPagination();
+        
+        // اگر کاربر لاگین کرده، وضعیت رأی دادن رو براش چک کن
+        if (this.isUserLoggedIn && this.userRole === 'student') {
+          this.checkUserVotingStatus();
+        }
+        
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('❌ خطا در دریافت اطلاعات درس:', err);
+        this.errorMessage = 'خطا در بارگذاری اطلاعات درس';
+        this.loading = false;
+      }
+    });
+}
+
+/**
+ * بررسی وضعیت رأی دادن کاربر برای همه نظرسنجی‌ها
+ */
+private checkUserVotingStatus(): void {
+  if (!this.course?.surveys) return;
+  
+  const token = this.authService.getToken();
+  if (!token) return;
+  
+  this.course.surveys.forEach(survey => {
+    // 1. بررسی آیا کاربر قبلاً رأی داده
+    this.http.get<{userVote: number}>(`http://localhost:8081/api/surveys/${survey.id}/my-vote`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
-          this.course = data;
-          this.sortStudentsByLastName();
-          this.calculateStats();
-          this.prepareUpcomingExams();
-          this.updateStudentPagination();
-          
-          // اگر نظرسنجی داریم و کاربر لاگین کرده، آرای کاربر را چک کنیم
-          if (this.course.surveys && this.isUserLoggedIn) {
-            this.loadUserVotes();
+        next: (response) => {
+          if (response.userVote !== undefined && response.userVote !== null) {
+            // کاربر قبلاً رأی داده
+            this.userVotes[survey.id] = response.userVote;
+            survey.userVote = response.userVote;
+            survey.userCanVote = false; // نمی‌تونه دوباره رأی بده (مگر لغو کنه)
+          } else {
+            // کاربر هنوز رأی نداده
+            survey.userCanVote = true;
           }
-          
-          this.loading = false;
         },
         error: (err) => {
-          console.error('❌ خطا در دریافت اطلاعات درس:', err);
-          this.errorMessage = 'خطا در بارگذاری اطلاعات درس';
-          this.loading = false;
+          console.log(`نظرسنجی ${survey.id}: کاربر رأی نداده یا خطا`);
+          survey.userCanVote = true;
         }
       });
-  }
+  });
+}
 
   
 
@@ -253,77 +288,184 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
       .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
   }
 
-    /**
-   * رأی دادن به یک گزینه نظرسنجی
-   */
-  voteForOption(surveyId: number, optionIndex: number): void {
-    console.log('🟡 تلاش برای رأی دادن:', surveyId, optionIndex);
+/**
+ * رأی دادن به یک گزینه نظرسنجی (با کلیک روی گزینه)
+ */
+voteForOption(surveyId: number, optionIndex: number): void {
+  console.log('🟡 تلاش برای رأی دادن:', { surveyId, optionIndex });
+  
+  // حذف خطای قبلی
+  delete this.surveyErrors[surveyId];
+  
+  // 1. چک کردن آیا کاربر لاگین کرده
+  if (!this.isUserLoggedIn) {
+    this.surveyErrors[surveyId] = 'برای رأی دادن باید وارد حساب کاربری شوید.';
+    this.router.navigate(['/login']);
+    return;
+  }
+  
+  // 2. چک کردن آیا کاربر دانشجو است
+  if (this.userRole !== 'student') {
+    this.surveyErrors[surveyId] = 'فقط دانشجویان می‌توانند رأی دهند.';
+    return;
+  }
+  
+  // 3. پیدا کردن نظرسنجی
+  const survey = this.course?.surveys.find(s => s.id === surveyId);
+  if (!survey) {
+    this.surveyErrors[surveyId] = 'نظرسنجی یافت نشد.';
+    return;
+  }
+  
+  // 4. چک کردن آیا کاربر قبلاً رأی داده
+  if (this.hasUserVoted(surveyId)) {
+    // اگر کاربر قبلاً رأی داده و می‌خواد رأیش رو تغییر بده
+    const confirmChange = confirm(`آیا می‌خواهید رأی خود را از گزینه ${this.userVotes[surveyId]! + 1} به گزینه ${optionIndex + 1} تغییر دهید؟`);
     
-    // حذف خطای قبلی
-    delete this.surveyErrors[surveyId];
-    
-    // 1. چک کردن آیا کاربر لاگین کرده
-    if (!this.isUserLoggedIn) {
-      this.surveyErrors[surveyId] = 'برای رأی دادن باید وارد حساب کاربری شوید.';
-      // هدایت به صفحه لاگین
-      this.router.navigate(['/login']);
+    if (!confirmChange) {
       return;
     }
     
-    // 2. چک کردن آیا کاربر دانشجو است
-    if (this.userRole !== 'student') {
-      this.surveyErrors[surveyId] = 'فقط دانشجویان می‌توانند رأی دهند.';
-      return;
+    // رأی قبلی رو لغو می‌کنیم و رأی جدید می‌دیم
+    this.changeVote(surveyId, optionIndex);
+    return;
+  }
+  
+  // 5. اگر کاربر هنوز رأی نداده
+  this.submitVote(surveyId, optionIndex);
+}
+/**
+ * تغییر رأی کاربر
+ */
+private changeVote(surveyId: number, newOptionIndex: number): void {
+  const token = this.authService.getToken();
+  if (!token) {
+    this.surveyErrors[surveyId] = 'خطا در احراز هویت. لطفاً مجدداً وارد شوید.';
+    return;
+  }
+  
+  // این درخواست باید در سرور پیاده‌سازی بشه
+  // فرض می‌کنیم یک endpoint برای تغییر رأی داریم
+  this.http.put(
+    `http://localhost:8081/api/surveys/${surveyId}/change-vote?newOptionIndex=${newOptionIndex}`,
+    {},
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     }
-    
-    // 3. اگر کاربر قبلاً رأی داده
-    if (this.hasUserVoted(surveyId)) {
-      this.surveyErrors[surveyId] = 'شما قبلاً به این نظرسنجی رأی داده‌اید.';
-      return;
-    }
-    
-    // 4. دریافت توکن
-    const token = this.authService.getToken();
-    if (!token) {
-      this.surveyErrors[surveyId] = 'خطا در احراز هویت. لطفاً مجدداً وارد شوید.';
-      return;
-    }
-    
-    // 5. ارسال درخواست رأی با توکن
-    this.http.post(
-      `http://localhost:8081/api/surveys/${surveyId}/vote?optionIndex=${optionIndex}`,
-      {},
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
+  ).pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        console.log('✅ رأی با موفقیت تغییر کرد:', response);
+        
+        // ذخیره رأی جدید کاربر
+        this.userVotes[surveyId] = newOptionIndex;
+        
+        // به‌روزرسانی آمار این نظرسنجی
+        this.refreshSingleSurveyStats(surveyId);
+      },
+      error: (err) => {
+        console.error('❌ خطا در تغییر رأی:', err);
+        
+        // اگر endpoint تغییر رأی نداریم، می‌تونیم اول لغو کنیم بعد رأی جدید بدیم
+        if (err.status === 404 || err.status === 501) {
+          // متد قدیمی: لغو + رأی جدید
+          this.cancelAndRevote(surveyId, newOptionIndex);
+        } else {
+          this.handleVoteError(surveyId, err);
         }
       }
-    ).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log('✅ رأی با موفقیت ثبت شد:', response);
-          
-          // ذخیره رأی کاربر
-          this.userVotes[surveyId] = optionIndex;
-          
-          // به‌روزرسانی آمار این نظرسنجی
-          this.refreshSingleSurveyStats(surveyId);
-        },
-        error: (err) => {
-          console.error('❌ خطا در ثبت رأی:', err);
-          
-          if (err.status === 401 || err.status === 403) {
-            this.surveyErrors[surveyId] = 'احراز هویت ناموفق. لطفاً مجدداً وارد شوید.';
-            this.authService.logout();
-          } else if (err.status === 400) {
-            this.surveyErrors[surveyId] = err.error?.error || 'خطا در ثبت رأی';
-          } else {
-            this.surveyErrors[surveyId] = 'خطا در ثبت رأی. لطفاً دوباره تلاش کنید.';
-          }
-        }
-      });
-  }
+    });
+}
 
+/**
+ * لغو رأی قبلی و رأی جدید دادن
+ */
+private cancelAndRevote(surveyId: number, newOptionIndex: number): void {
+  const token = this.authService.getToken();
+  if (!token) return;
+  
+  // 1. اول رأی قبلی رو لغو می‌کنیم
+  this.http.delete(
+    `http://localhost:8081/api/surveys/${surveyId}/cancel-vote`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  ).pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => {
+        console.log('🗑️ رأی قبلی لغو شد');
+        
+        // 2. حالا رأی جدید می‌دیم
+        this.submitVote(surveyId, newOptionIndex);
+      },
+      error: (err) => {
+        console.error('❌ خطا در لغو رأی:', err);
+        this.surveyErrors[surveyId] = 'خطا در تغییر رأی. لطفاً دوباره تلاش کنید.';
+      }
+    });
+}
+
+/**
+ * مدیریت خطاهای رأی دادن
+ */
+private handleVoteError(surveyId: number, err: any): void {
+  if (err.status === 401 || err.status === 403) {
+    this.surveyErrors[surveyId] = 'احراز هویت ناموفق. لطفاً مجدداً وارد شوید.';
+    this.authService.logout();
+  } else if (err.status === 400) {
+    this.surveyErrors[surveyId] = err.error?.error || 'شما قبلاً به این نظرسنجی رأی داده‌اید.';
+  } else if (err.status === 404) {
+    this.surveyErrors[surveyId] = 'این عملیات در دسترس نیست.';
+  } else {
+    this.surveyErrors[surveyId] = 'خطا در ثبت رأی. لطفاً دوباره تلاش کنید.';
+  }
+}
+
+/**
+ * ارسال رأی جدید به سرور
+ */
+private submitVote(surveyId: number, optionIndex: number): void {
+  const token = this.authService.getToken();
+  if (!token) {
+    this.surveyErrors[surveyId] = 'خطا در احراز هویت. لطفاً مجدداً وارد شوید.';
+    return;
+  }
+  
+  this.http.post(
+    `http://localhost:8081/api/surveys/${surveyId}/vote?optionIndex=${optionIndex}`,
+    {},
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  ).pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        console.log('✅ رأی با موفقیت ثبت شد:', response);
+        
+        // ذخیره رأی کاربر
+        this.userVotes[surveyId] = optionIndex;
+        
+        // به‌روزرسانی آمار این نظرسنجی
+        this.refreshSingleSurveyStats(surveyId);
+        
+        // غیرفعال کردن امکان رأی مجدد (تا وقتی که آمار به‌روزرسانی بشه)
+        const survey = this.course?.surveys.find(s => s.id === surveyId);
+        if (survey) {
+          survey.userCanVote = false;
+        }
+      },
+      error: (err) => {
+        console.error('❌ خطا در ثبت رأی:', err);
+        this.handleVoteError(surveyId, err);
+      }
+    });
+}
   
 
   /**
@@ -385,22 +527,60 @@ export class CourseDetailsComponent implements OnInit, OnDestroy {
   /**
    * لغو رأی کاربر
    */
-  cancelVote(surveyId: number): void {
-    // حذف خطای قبلی
-    delete this.surveyErrors[surveyId];
-    
-    // درخواست لغو رأی به سرور (این متد باید در سرور پیاده‌سازی شود)
-    // برای سادگی، می‌توانیم فقط رأی را از حافظه محلی پاک کنیم
-    // یا یک درخواست DELETE به سرور بفرستیم
-    
-    // در این مثال، فقط از حافظه محلی پاک می‌کنیم
-    delete this.userVotes[surveyId];
-    
-    // به‌روزرسانی آمار نظرسنجی
-    this.refreshSurveyStats(surveyId);
-    
-    console.log('🗑️ رأی کاربر لغو شد:', surveyId);
+  /**
+ * لغو رأی کاربر
+ */
+cancelVote(surveyId: number): void {
+  // حذف خطای قبلی
+  delete this.surveyErrors[surveyId];
+  
+  const confirmCancel = confirm('آیا مطمئن هستید که می‌خواهید رأی خود را لغو کنید؟');
+  if (!confirmCancel) return;
+  
+  const token = this.authService.getToken();
+  if (!token) {
+    this.surveyErrors[surveyId] = 'خطا در احراز هویت. لطفاً مجدداً وارد شوید.';
+    return;
   }
+  
+  this.http.delete(
+    `http://localhost:8081/api/surveys/${surveyId}/cancel-vote`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  ).pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => {
+        console.log('🗑️ رأی کاربر لغو شد:', surveyId);
+        
+        // حذف از حافظه محلی
+        delete this.userVotes[surveyId];
+        
+        // به‌روزرسانی آمار نظرسنجی
+        this.refreshSingleSurveyStats(surveyId);
+        
+        // فعال کردن امکان رأی مجدد
+        const survey = this.course?.surveys.find(s => s.id === surveyId);
+        if (survey) {
+          survey.userCanVote = true;
+          survey.userVote = undefined;
+        }
+      },
+      error: (err) => {
+        console.error('❌ خطا در لغو رأی:', err);
+        
+        if (err.status === 404) {
+          // اگر endpoint لغو رأی نداریم، فقط از حافظه محلی پاک می‌کنیم
+          delete this.userVotes[surveyId];
+          this.refreshSingleSurveyStats(surveyId);
+        } else {
+          this.surveyErrors[surveyId] = 'خطا در لغو رأی. لطفاً دوباره تلاش کنید.';
+        }
+      }
+    });
+}
 
   /**
    * به‌روزرسانی آمار نظرسنجی

@@ -76,13 +76,13 @@
     </div>
   </div>
   
-  <div class="stat-card" *ngIf="stats.activeSurveys > 0">
+  <!-- <div class="stat-card" *ngIf="stats.activeSurveys > 0">
     <div class="stat-icon">✅</div>
     <div class="stat-info">
       <div class="stat-number">{{ convertToPersianNumbers(stats.activeSurveys.toString()) }}</div>
       <div class="stat-label">نظرسنجی فعال</div>
     </div>
-  </div>
+  </div> -->
 </div>
 
 
@@ -100,13 +100,13 @@
     </div>
     <span class="section-badge">{{ convertToPersianNumbers(upcomingExams.length.toString()) }} امتحان</span>
   </div>
-  
+  <!-- (click)="goToExam(exam.id)" -->
   <div *ngIf="upcomingExams.length > 0; else noUpcomingExams" class="exams-list">
     <div 
       *ngFor="let exam of upcomingExams" 
       class="exam-card"
       [ngClass]="getExamStatusClass(exam.startDate)"
-      (click)="goToExam(exam.id)"
+      
     >
       <div class="exam-icon">📝</div>
       
@@ -140,78 +140,133 @@
     </div>
   </ng-template>
 </div>
-  <!-- بخش نظرسنجی‌ها (نسخه ساده شده) -->
-<div class="section-card" *ngIf="course?.surveys && course.surveys.length > 0">
+<!-- بخش نظرسنجی‌ها (نسخه جدولی) -->
+<!-- بخش نظرسنجی‌ها (نسخه جدولی) -->
+<div class="section-card table-style" *ngIf="course?.surveys && course.surveys.length > 0">
   <div class="section-header">
     <h2>📊 نظرسنجی‌ها</h2>
     <span class="section-badge">{{ convertToPersianNumbers(course.surveys.length.toString()) }} نظرسنجی</span>
   </div>
-  <div *ngIf="!isUserLoggedIn" class="login-prompt">
-  <p>🔒 برای رأی دادن در نظرسنجی‌ها باید وارد حساب کاربری خود شوید.</p>
-  <button class="login-btn" (click)="goToLogin()">ورود به حساب کاربری</button>
-</div>
   
-  <div class="surveys-list">
-    <div *ngFor="let survey of course.surveys" class="survey-card">
-      <div class="survey-header">
-        <h3 class="survey-title">{{ survey.title }}</h3>
-        <div class="survey-status">
-          <span class="survey-badge" [ngClass]="isSurveyActive(survey) ? 'status-active' : 'status-inactive'">
-            {{ isSurveyActive(survey) ? 'فعال' : 'بدون رأی' }}
-          </span>
-          <span class="total-votes">
-            <span class="vote-icon">👥</span>
-            {{ convertToPersianNumbers(survey.totalVotes.toString()) }} رأی
-          </span>
-        </div>
-      </div>
-      
-      <div class="survey-options-grid">
-        <div 
-          *ngFor="let option of survey.options; let i = index" 
-          class="survey-option"
-          [class.selected]="isOptionSelected(survey.id, i)"
-          [class.disabled]="!isUserLoggedIn || userRole !== 'student'"
-          (click)="voteForOption(survey.id, i)"
-          [attr.disabled]="hasUserVoted(survey.id) ? true : null"
-        >
-          <div class="option-content">
-            <span class="option-number">{{ convertToPersianNumbers((i + 1).toString()) }}</span>
-            <span class="option-text">{{ option }}</span>
-          </div>
-          
-          <!-- پیام اگر کاربر لاگین نکرده -->
-          <div *ngIf="!isUserLoggedIn" class="login-required">
-            برای رأی دادن وارد شوید
-          </div>
-          <div class="option-stats" *ngIf="isSurveyActive(survey)">
-            <div class="vote-count">
-              {{ convertToPersianNumbers(getSurveyOptionCount(survey, option).toString()) }} رأی
-            </div>
-            <div class="vote-percentage">
-              {{ convertToPersianNumbers(getSurveyOptionPercentage(survey, option).toFixed(0)) }}%
+  <table class="surveys-table-clean">
+    <thead>
+      <tr>
+        <th>عنوان نظرسنجی</th>
+        <th>وضعیت</th>
+        <th>آمار</th>
+        <th>گزینه‌ها</th>
+        <th>عملیات</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr *ngFor="let survey of course.surveys" class="survey-row-clean">
+        <!-- نشانگر رأی کاربر -->
+        <!-- <div class="user-vote-indicator" *ngIf="hasUserVoted(survey.id)">
+          <span>✓</span>
+          رأی شما
+        </div> -->
+        
+        <td>
+          <div class="survey-card-clean">
+            <div class="survey-icon-clean">📊</div>
+            <div class="survey-info-clean">
+              <div class="survey-title-clean">{{ survey.title }}</div>
+              <div class="survey-subtitle-clean">نظرسنجی درس</div>
             </div>
           </div>
-          
-          <div class="vote-indicator" *ngIf="isOptionSelected(survey.id, i)">
-            <span class="check-icon">✓</span>
-            رأی شما
+        </td>
+        
+        <td>
+          <div class="status-container-clean">
+            <div class="status-badge-clean">
+              <span class="status-icon-clean">
+                {{ isSurveyActive(survey) ? '✅' : '⏸️' }}
+              </span>
+              <span class="status-text-clean">
+                {{ isSurveyActive(survey) ? 'فعال' : 'بدون رأی' }}
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
-      
-      <!-- دکمه لغو رأی -->
-      <div class="survey-actions" *ngIf="hasUserVoted(survey.id)">
-        <button class="cancel-vote-btn" (click)="cancelVote(survey.id)">
-          ✕ لغو رأی
-        </button>
-      </div>
-      
-      <!-- پیام خطا -->
-      <div *ngIf="getSurveyError(survey.id)" class="survey-error">
-        {{ getSurveyError(survey.id) }}
-      </div>
-    </div>
+        </td>
+        
+        <td>
+          <div class="stats-card-clean">
+            <div class="stats-badge-clean">
+              <span class="stats-icon-clean">👥</span>
+              <span class="stats-value-clean">
+                {{ convertToPersianNumbers(survey.totalVotes.toString()) }} رأی
+              </span>
+            </div>
+          </div>
+        </td>
+        
+        <td>
+          <div class="options-card-clean">
+            <div class="options-list-clean">
+              <div 
+                *ngFor="let option of survey.options; let i = index" 
+                class="option-item-clean"
+                [class.selected]="isOptionSelected(survey.id, i)"
+                [class.disabled]="!isUserLoggedIn || userRole !== 'student' || hasUserVoted(survey.id)"
+                (click)="voteForOption(survey.id, i)"
+              >
+                <span class="option-number-clean">
+                  {{ convertToPersianNumbers((i + 1).toString()) }}
+                </span>
+                <span class="option-text-clean">{{ option }}</span>
+                <span 
+                  class="option-percentage-clean" 
+                  *ngIf="isSurveyActive(survey)"
+                >
+                  {{ convertToPersianNumbers(getSurveyOptionPercentage(survey, option).toFixed(0)) }}%
+                </span>
+                
+                <div 
+                  class="user-vote-check" 
+                  *ngIf="isOptionSelected(survey.id, i)"
+                >
+                  ✓ رأی شما
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+        
+        <td>
+          <div class="actions-card-clean">
+            <!-- اگر کاربر لاگین نکرده -->
+            <div *ngIf="!isUserLoggedIn">
+              <button class="login-btn-clean" (click)="goToLogin()">
+                🔒 ورود برای رأی
+              </button>
+            </div>
+            
+            <!-- اگر کاربر استاد است -->
+            <div *ngIf="isUserLoggedIn && userRole !== 'student'">
+              <span style="font-size: 12px; color: #6b7280;">فقط دانشجویان</span>
+            </div>
+            
+            <!-- اگر دانشجو هست و رأی داده -->
+            <div *ngIf="isUserLoggedIn && userRole === 'student' && hasUserVoted(survey.id)">
+              <button class="cancel-vote-btn-clean" (click)="cancelVote(survey.id)">
+                ✕ لغو رأی
+              </button>
+            </div>
+            
+            <!-- اگر دانشجو هست و رأی نداده -->
+            <div *ngIf="isUserLoggedIn && userRole === 'student' && !hasUserVoted(survey.id)">
+              <span style="font-size: 12px; color: #6b7280;">روی گزینه کلیک کنید</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <!-- پیام خطای عمومی -->
+  <div *ngIf="surveyError" class="survey-error-clean">
+    {{ surveyError }}
   </div>
 </div>
 

@@ -612,6 +612,602 @@
   }
 }
 
+/* ===== بخش دکمه‌های درس ===== */
+.course-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #e6f2ff;
+}
+
+.reserve-exam-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.reserve-exam-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.reserve-exam-btn.clickable {
+  cursor: pointer;
+}
+
+.course-actions {
+  display: flex;
+  gap: 12px;
+  margin-left: 16px;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #e6f2ff;
+}
+
+.refresh-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  color: #000000;
+  border: 1.5px solid #93c5fd;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(59, 130, 246, 0.25);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== دکمه رزرو امتحان در بخش امتحان‌ها ===== */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.reserve-exam-btn.small {
+  padding: 8px 16px;
+  font-size: 13px;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.reserve-exam-btn.small:hover {
+  background: linear-gradient(135deg, #059669, #10b981);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(5, 150, 105, 0.4);
+}
+
+.no-content-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.no-content-message p {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* ===== استایل‌های مشترک برای لاگین ===== */
+.login-prompt {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 2px solid #f59e0b;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #92400e;
+}
+
+.login-prompt p {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.login-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-required {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ===== استایل‌های جدید برای جدول نظرسنجی‌ها (شبیه teacher-dashboard) ===== */
+.surveys-table-clean {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  background: transparent;
+}
+
+.surveys-table-clean thead {
+  background: transparent;
+}
+
+.surveys-table-clean th {
+  padding: 16px 20px;
+  text-align: right;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.surveys-table-clean th:first-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.surveys-table-clean th:last-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.surveys-table-clean td {
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.surveys-table-clean td:first-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-left: none;
+  padding-right: 20px;
+}
+
+.surveys-table-clean td:last-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-right: none;
+  padding-left: 20px;
+}
+
+.surveys-table-clean td:not(:first-child):not(:last-child) {
+  border-left: none;
+  border-right: none;
+}
+
+/* ردیف نظرسنجی */
+.survey-row-clean {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* حذف transform روی hover */
+.survey-row-clean:hover {
+  transform: none;
+}
+
+.survey-row-clean:hover td {
+  background: #ffffff;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* کارت نظرسنجی */
+.survey-card-clean {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0;
+}
+
+.survey-icon-clean {
+  width: 44px;
+  height: 44px;
+  background: #3b82f6;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* حذف transform روی hover */
+.survey-row-clean:hover .survey-icon-clean {
+  transform: none;
+  background: #2563eb;
+}
+
+.survey-info-clean {
+  flex: 1;
+}
+
+.survey-title-clean {
+  font-weight: 600;
+  color: #111827;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.survey-subtitle-clean {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  border: 1px solid #dbeafe;
+}
+
+/* کارت وضعیت */
+.status-container-clean {
+  padding: 18px 0;
+  text-align: center;
+}
+
+.status-badge-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.survey-row-clean:hover .status-badge-clean {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.status-icon-clean {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.status-text-clean {
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+}
+
+/* کارت آمار */
+.stats-card-clean {
+  padding: 18px 0;
+  text-align: center;
+}
+
+.stats-badge-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fefce8;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #fde68a;
+  transition: all 0.2s ease;
+}
+
+.survey-row-clean:hover .stats-badge-clean {
+  background: #fef3c7;
+}
+
+.stats-icon-clean {
+  color: #d97706;
+  font-size: 14px;
+}
+
+.stats-value-clean {
+  font-weight: 600;
+  color: #92400e;
+  font-size: 13px;
+}
+
+/* کارت گزینه‌ها */
+.options-card-clean {
+  padding: 18px 0;
+}
+
+.options-list-clean {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 300px;
+}
+
+.option-item-clean {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  cursor: pointer;
+}
+
+/* حذف transform روی hover */
+.option-item-clean:hover:not(.disabled):not(.selected) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  transform: none;
+}
+
+.option-number-clean {
+  width: 24px;
+  height: 24px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.option-text-clean {
+  flex: 1;
+  font-size: 13px;
+  color: #374151;
+}
+
+.option-percentage-clean {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #e6f2ff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  min-width: 45px;
+  text-align: center;
+}
+
+/* کارت عملیات */
+.actions-card-clean {
+  padding: 18px 0;
+  text-align: center;
+  min-width: 150px;
+}
+
+.vote-btn-clean {
+  padding: 8px 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.vote-btn-clean:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+}
+
+.vote-btn-clean:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #6b7280;
+}
+
+.cancel-vote-btn-clean {
+  padding: 8px 16px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.cancel-vote-btn-clean:hover {
+  background: #fee2e2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+}
+
+.login-btn-clean {
+  padding: 8px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.login-btn-clean:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+/* وضعیت‌های گزینه‌ها */
+.option-item-clean.selected {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2) !important;
+}
+
+.option-item-clean.selected .option-number-clean {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
+}
+
+.option-item-clean.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.option-item-clean.voted {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* نشانگر "رأی شما" روی گزینه انتخابی */
+.option-item-clean.selected::after {
+  content: "رأی شما";
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  background: #10b981;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  z-index: 1;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+  animation: slideIn 0.3s ease-out;
+}
+
+/* پیام خطا */
+.survey-error-clean {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeIn 0.5s ease-out;
+  z-index: 1;
+}
+
+/* انیمیشن‌ها */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ریسپانسیو برای نظرسنجی‌ها */
+@media (max-width: 768px) {
+  .survey-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .survey-badge {
+    align-self: flex-start;
+  }
+  
+  .option-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .option-index {
+    align-self: flex-start;
+  }
+  
+  .option-percentage {
+    align-self: flex-start;
+  }
+  
+  .section-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .reserve-exam-btn.small {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* ===== ریسپانسیو ===== */
 @media (max-width: 768px) {
   .course-details-container {
@@ -666,6 +1262,85 @@
     padding: 12px 8px;
     font-size: 13px;
   }
+  
+  .course-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .reserve-exam-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .course-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  /* ریسپانسیو برای جدول نظرسنجی‌ها */
+  .surveys-table-clean {
+    display: block;
+    overflow-x: auto;
+    border-spacing: 0 8px;
+  }
+  
+  .surveys-table-clean th,
+  .surveys-table-clean td {
+    min-width: 160px;
+  }
+  
+  .survey-card-clean {
+    min-width: 220px;
+  }
+  
+  .surveys-table-clean th {
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  
+  .survey-card-clean {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .survey-icon-clean {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  
+  .status-container-clean,
+  .stats-card-clean,
+  .options-card-clean,
+  .actions-card-clean {
+    padding: 14px 0;
+  }
+  
+  .options-list-clean {
+    max-width: 200px;
+  }
+  
+  .option-text-clean {
+    font-size: 12px;
+  }
+  
+  .vote-btn-clean,
+  .cancel-vote-btn-clean,
+  .login-btn-clean {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  /* نشانگر "رأی شما" در موبایل */
+  .option-item-clean.selected::after {
+    top: -6px;
+    left: 4px;
+    font-size: 9px;
+    padding: 1px 6px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -682,536 +1357,27 @@
     flex-direction: column;
     gap: 8px;
   }
-  /* ===== بخش دکمه‌های درس ===== */
-.course-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 2px solid #e6f2ff;
-}
-
-.reserve-exam-btn {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-
-.reserve-exam-btn:hover {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-}
-
-/* اگر از RouterModule استفاده نمی‌کنید و دکمه با click کار می‌کند: */
-.reserve-exam-btn.clickable {
-  cursor: pointer;
-}
-
-/* برای ریسپانسیو */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
+  
+  /* ریسپانسیو برای جدول نظرسنجی‌ها */
+  .surveys-table-clean th {
+    font-size: 11px;
+    padding: 10px;
   }
   
-  .course-actions {
+  .options-list-clean {
+    max-width: 180px;
+  }
+  
+  .option-item-clean {
+    flex-wrap: wrap;
+  }
+  
+  .option-percentage-clean {
     width: 100%;
-    justify-content: flex-start;
+    text-align: left;
+    margin-top: 4px;
   }
   
-  .reserve-exam-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-/* ===== بخش دکمه‌های درس ===== */
-.course-actions {
-  display: flex;
-  gap: 12px;
-  margin-left: 16px;
-}
-
-.reserve-exam-btn {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.reserve-exam-btn:hover {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-}
-
-/* یا اگر می‌خواهید در بخش پایین قرار دهید: */
-.header-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 18px;
-  border-bottom: 2px solid #e6f2ff;
-}
-
-/* برای ریسپانسیو */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  
-  .course-actions {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  .reserve-exam-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-.refresh-btn {
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
-  color: #000000;
-  border: 1.5px solid #93c5fd;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.refresh-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 12px rgba(59, 130, 246, 0.25);
-}
-
-.refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-/* ===== استایل نظرسنجی‌ها ===== */
-.surveys-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.survey-card {
-  background: linear-gradient(135deg, #f8fbff 0%, #edf4ff 100%);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1.5px solid #93c5fd;
-  transition: all 0.3s ease;
-}
-
-.survey-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.15);
-}
-
-.survey-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e6f2ff;
-}
-
-.survey-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #000000;
-  margin: 0;
-  flex: 1;
-}
-
-.survey-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.survey-stats {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.survey-stat {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #000000;
-  font-weight: 600;
-}
-
-.survey-stat .stat-icon {
-  font-size: 16px;
-}
-
-.survey-options {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.survey-option {
-  background: white;
-  border-radius: 8px;
-  padding: 16px;
-  border: 1px solid #e6f2ff;
-}
-
-.option-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.option-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: #000000;
-  flex: 1;
-}
-
-.option-percentage {
-  font-size: 16px;
-  font-weight: 700;
-  color: #3b82f6;
-  background: #e6f2ff;
-  padding: 4px 12px;
-  border-radius: 20px;
-  min-width: 60px;
-  text-align: center;
-}
-
-.option-bar-container {
-  height: 8px;
-  background: #e6f2ff;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.option-bar {
-  height: 100%;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  border-radius: 4px;
-  transition: width 1s ease;
-}
-
-.option-footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.option-count {
-  font-size: 13px;
-  color: #000000;
-  opacity: 0.7;
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .survey-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  
-  .survey-stats {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .option-header {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-  }
-  
-  .option-percentage {
-    align-self: flex-start;
-  }
-}
-
-/* ===== استایل نظرسنجی‌ها (بخش اصلاح شده) ===== */
-.surveys-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.survey-card {
-  background: linear-gradient(135deg, #f8fbff 0%, #edf4ff 100%);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1.5px solid #93c5fd;
-  transition: all 0.3s ease;
-}
-
-.survey-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
-}
-
-.survey-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #e6f2ff;
-}
-
-.survey-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #000000;
-  margin: 0;
-  flex: 1;
-}
-
-.survey-badge {
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.survey-stats {
-  margin-bottom: 20px;
-}
-
-.survey-stat {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #000000;
-  font-weight: 600;
-}
-
-.survey-stat .stat-icon {
-  font-size: 16px;
-  color: #3b82f6;
-}
-
-.survey-options {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.survey-option {
-  background: white;
-  border-radius: 10px;
-  padding: 16px;
-  border: 1.5px solid #e6f2ff;
-  transition: all 0.3s ease;
-}
-
-.survey-option:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-}
-
-.option-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.option-index {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.option-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: #000000;
-  flex: 1;
-}
-
-.option-percentage {
-  font-size: 16px;
-  font-weight: 700;
-  color: #3b82f6;
-  background: #e6f2ff;
-  padding: 6px 14px;
-  border-radius: 20px;
-  min-width: 70px;
-  text-align: center;
-  border: 1.5px solid #93c5fd;
-}
-
-.option-bar-container {
-  height: 10px;
-  background: #e6f2ff;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 10px;
-  border: 1px solid #d1e7ff;
-}
-
-.option-bar {
-  height: 100%;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  border-radius: 5px;
-  transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.option-footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.option-count {
-  font-size: 13px;
-  color: #374151;
-  font-weight: 600;
-  padding: 4px 12px;
-  background: #f9fafb;
-  border-radius: 15px;
-  border: 1px solid #e5e7eb;
-}
-
-/* ===== دکمه رزرو امتحان در بخش امتحان‌ها ===== */
-.section-title-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.reserve-exam-btn.small {
-  padding: 8px 16px;
-  font-size: 13px;
-  background: linear-gradient(135deg, #10b981, #34d399);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.reserve-exam-btn.small:hover {
-  background: linear-gradient(135deg, #059669, #10b981);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 14px rgba(5, 150, 105, 0.4);
-}
-
-.no-content-message {
-  text-align: center;
-  padding: 40px 20px;
-  color: #6b7280;
-  font-size: 16px;
-}
-
-.no-content-message p {
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-/* ===== ریسپانسیو برای نظرسنجی‌ها ===== */
-@media (max-width: 768px) {
-  .survey-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  
-  .survey-badge {
-    align-self: flex-start;
-  }
-  
-  .option-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .option-index {
-    align-self: flex-start;
-  }
-  
-  .option-percentage {
-    align-self: flex-start;
-  }
-  
-  .section-title-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  
-  .reserve-exam-btn.small {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* ===== برای نمایش بهتر در موبایل ===== */
-@media (max-width: 480px) {
   .survey-card {
     padding: 16px;
   }
@@ -1233,366 +1399,4 @@
   .option-percentage {
     order: 2;
   }
-}
-/* ... (همه استایل‌های قبلی باقی می‌مانند) ... */
-
-/* ===== بخش نظرسنجی‌ها (نسخه ساده) ===== */
-.surveys-list {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.survey-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
-  border-radius: 16px;
-  padding: 24px;
-  border: 2px solid #e6f2ff;
-  transition: all 0.3s ease;
-}
-
-.survey-card:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
-}
-
-.survey-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #e6f2ff;
-}
-
-.survey-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #000000;
-  margin: 0;
-  flex: 1;
-}
-
-.survey-status {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
-}
-
-.survey-badge {
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.status-active {
-  background: linear-gradient(135deg, #10b981, #34d399);
-  color: white;
-  border: 2px solid #10b981;
-}
-
-.status-inactive {
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-  color: #6b7280;
-  border: 2px solid #d1d5db;
-}
-
-.total-votes {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #4b5563;
-  font-weight: 600;
-}
-
-.vote-icon {
-  font-size: 16px;
-}
-
-/* ===== گزینه‌های نظرسنجی ===== */
-.survey-options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.survey-option {
-  background: linear-gradient(135deg, #f8fbff 0%, #edf4ff 100%);
-  border: 2px solid #d1e7ff;
-  border-radius: 12px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.survey-option:hover:not(.selected):not([disabled]) {
-  border-color: #93c5fd;
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.2);
-}
-
-.survey-option.selected {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  border-color: #3b82f6;
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
-}
-
-.survey-option[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-}
-
-.option-content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.option-number {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.survey-option.selected .option-number {
-  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-}
-
-.option-text {
-  font-size: 16px;
-  font-weight: 600;
-  color: #000000;
-  flex: 1;
-}
-
-/* ===== آمار گزینه‌ها ===== */
-.option-stats {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 2px solid #e6f2ff;
-}
-
-.vote-count {
-  font-size: 14px;
-  font-weight: 600;
-  color: #4b5563;
-}
-
-.vote-percentage {
-  font-size: 18px;
-  font-weight: 700;
-  color: #3b82f6;
-  background: #e6f2ff;
-  padding: 6px 14px;
-  border-radius: 20px;
-}
-
-.survey-option.selected .vote-percentage {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-/* ===== نشانگر رأی کاربر ===== */
-.vote-indicator {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: linear-gradient(135deg, #10b981, #34d399);
-  color: white;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  animation: slideIn 0.4s ease-out;
-}
-
-.check-icon {
-  font-size: 16px;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* ===== دکمه‌های نظرسنجی ===== */
-.survey-actions {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 20px;
-  border-top: 2px solid #e6f2ff;
-}
-
-.cancel-vote-btn {
-  padding: 10px 24px;
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-  color: #dc2626;
-  border: 2px solid #fca5a5;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cancel-vote-btn:hover {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
-}
-
-/* ===== خطای نظرسنجی ===== */
-.survey-error {
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-  color: #dc2626;
-  border: 2px solid #fca5a5;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* ===== ریسپانسیو برای نظرسنجی‌ها ===== */
-@media (max-width: 768px) {
-  .survey-header {
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .survey-status {
-    align-items: flex-start;
-    width: 100%;
-  }
-  
-  .survey-options-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  
-  .survey-card {
-    padding: 20px;
-  }
-  
-  .option-content {
-    gap: 12px;
-  }
-  
-  .option-number {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
-  }
-  
-  .option-text {
-    font-size: 15px;
-  }
-  
-  .vote-percentage {
-    font-size: 16px;
-    padding: 4px 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .survey-card {
-    padding: 16px;
-  }
-  
-  .survey-title {
-    font-size: 18px;
-  }
-  
-  .option-stats {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-  }
-  
-  .survey-actions {
-    justify-content: center;
-  }
-  
-  .cancel-vote-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-/* استایل‌های جدید */
-.login-prompt {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border: 2px solid #f59e0b;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #92400e;
-}
-
-.login-prompt p {
-  margin: 0 0 12px 0;
-  font-weight: 600;
-}
-
-.login-btn {
-  padding: 10px 24px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.survey-option.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.survey-option.disabled:hover {
-  transform: none;
-  box-shadow: none;
-  border-color: #d1d5db;
-}
-
-.login-required {
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  margin-top: 10px;
-}
 }
