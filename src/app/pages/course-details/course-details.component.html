@@ -2,113 +2,219 @@
   
   <!-- هدر درس -->
   <div class="course-header-section">
-    <div class="header-content">
-      
-      <div class="course-title">
-        <h1>{{ course.courseName }}</h1>
-        <div class="course-meta">
-          <span class="course-code">{{ convertToPersianNumbers(course.courseCode) }}</span>
-          <span class="divider">|</span>
-          <span class="course-teacher">استاد: {{ course.teacher.firstName }} {{ course.teacher.lastName }}</span>
-        </div>
-        <span class="course-teacher"> {{ course.teacher.email }} </span>
+  <div class="header-content">
+    
+    <div class="course-title">
+      <h1>{{ course.courseName }}</h1>
+      <div class="course-meta">
+        <span class="course-code">{{ convertToPersianNumbers(course.courseCode) }}</span>
+        <span class="divider">|</span>
+        <span class="course-teacher">استاد: {{ course.teacher.firstName }} {{ course.teacher.lastName }}</span>
       </div>
-      <button class="back-btn" (click)="goBack()">← بازگشت</button>
+      <span class="course-teacher"> {{ course.teacher.email }} </span>
     </div>
-    <div class="course-actions">
+    <button class="back-btn" (click)="goBack()">← بازگشت</button>
+  </div>
+  
+  <div class="course-schedule">
+    <div class="schedule-item">
+      <span class="schedule-icon">📅</span>
+      <span class="schedule-text">{{ course.dayOfWeek }}</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-icon">🕒</span>
+      <span class="schedule-text">{{ convertToPersianNumbers(course.timeC) }}</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-icon">📍</span>
+      <span class="schedule-text">{{ course.roomC }}</span>
+    </div>
+  </div>
+</div>
+
+
+  <!-- کارت‌های آماری -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">👥</div>
+    <div class="stat-info">
+      <div class="stat-number">{{ convertToPersianNumbers(stats.totalStudents.toString()) }}</div>
+      <div class="stat-label">دانشجو</div>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-icon">📝</div>
+    <div class="stat-info">
+      <div class="stat-number">{{ convertToPersianNumbers(stats.totalExams.toString()) }}</div>
+      <div class="stat-label">امتحان کل</div>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-info">
+      <div class="stat-number">{{ convertToPersianNumbers(stats.todayExams.toString()) }}</div>
+      <div class="stat-label">امتحان امروز</div>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-icon">📅</div>
+    <div class="stat-info">
+      <div class="stat-number">{{ convertToPersianNumbers(stats.upcomingExams.toString()) }}</div>
+      <div class="stat-label">آینده</div>
+    </div>
+  </div>
+
+  <!-- کارت نظرسنجی‌ها -->
+  <div class="stat-card" *ngIf="stats.totalSurveys > 0">
+    <div class="stat-icon">📊</div>
+    <div class="stat-info">
+      <div class="stat-number">{{ convertToPersianNumbers(stats.totalSurveys.toString()) }}</div>
+      <div class="stat-label">نظرسنجی</div>
+    </div>
+  </div>
+  
+  <div class="stat-card" *ngIf="stats.activeSurveys > 0">
+    <div class="stat-icon">✅</div>
+    <div class="stat-info">
+      <div class="stat-number">{{ convertToPersianNumbers(stats.activeSurveys.toString()) }}</div>
+      <div class="stat-label">نظرسنجی فعال</div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- بخش امتحان‌های آینده -->
+<div class="section-card">
+  <div class="section-header">
+    <div class="section-title-row">
+      <h2>📅 امتحان‌های آینده</h2>
       <button 
-        class="reserve-exam-btn"
+        class="reserve-exam-btn small"
         (click)="navigateToExamReservation()"
       >
         🗓️ رزرو امتحان جدید
       </button>
     </div>
-    
-    <div class="course-schedule">
-      <div class="schedule-item">
-        <span class="schedule-icon">📅</span>
-        <span class="schedule-text">{{ course.dayOfWeek }}</span>
+    <span class="section-badge">{{ convertToPersianNumbers(upcomingExams.length.toString()) }} امتحان</span>
+  </div>
+  
+  <div *ngIf="upcomingExams.length > 0; else noUpcomingExams" class="exams-list">
+    <div 
+      *ngFor="let exam of upcomingExams" 
+      class="exam-card"
+      [ngClass]="getExamStatusClass(exam.startDate)"
+      (click)="goToExam(exam.id)"
+    >
+      <div class="exam-icon">📝</div>
+      
+      <div class="exam-info">
+        <h3 class="exam-name">{{ exam.name }}</h3>
+        <div class="exam-details">
+          <span class="exam-room">📍 {{ exam.room.name }}</span>
+          <span class="exam-time">🕒 {{ exam.timeRange }}</span>
+        </div>
       </div>
-      <div class="schedule-item">
-        <span class="schedule-icon">🕒</span>
-        <span class="schedule-text">{{ convertToPersianNumbers(course.timeC) }}</span>
-      </div>
-      <div class="schedule-item">
-        <span class="schedule-icon">📍</span>
-        <span class="schedule-text">{{ course.roomC }}</span>
+      
+      <div class="exam-date">
+        <div class="exam-day">{{ exam.dayOfWeek }}</div>
+        <div class="exam-date-number">{{ exam.persianDate }}</div>
+        <div class="exam-status" [ngClass]="getExamStatusClass(exam.startDate)">
+          {{ getExamStatusText(exam.startDate) }}
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- کارت‌های آماری -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon">👥</div>
-      <div class="stat-info">
-        <div class="stat-number">{{ convertToPersianNumbers(stats.totalStudents.toString()) }}</div>
-        <div class="stat-label">دانشجو</div>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">📝</div>
-      <div class="stat-info">
-        <div class="stat-number">{{ convertToPersianNumbers(stats.totalExams.toString()) }}</div>
-        <div class="stat-label">امتحان کل</div>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">🎯</div>
-      <div class="stat-info">
-        <div class="stat-number">{{ convertToPersianNumbers(stats.todayExams.toString()) }}</div>
-        <div class="stat-label">امتحان امروز</div>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">📅</div>
-      <div class="stat-info">
-        <div class="stat-number">{{ convertToPersianNumbers(stats.upcomingExams.toString()) }}</div>
-        <div class="stat-label">آینده</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- بخش امتحان‌های آینده -->
-  <div class="section-card" *ngIf="upcomingExams.length > 0">
-    <div class="section-header">
-      <h2>📅 امتحان‌های آینده</h2>
-      <span class="section-badge">{{ convertToPersianNumbers(upcomingExams.length.toString()) }} امتحان</span>
-    </div>
-    
-    <div class="exams-list">
-      <div 
-        *ngFor="let exam of upcomingExams" 
-        class="exam-card"
-        [ngClass]="getExamStatusClass(exam.startDate)"
-        (click)="goToExam(exam.id)"
+  
+  <ng-template #noUpcomingExams>
+    <div class="no-content-message">
+      <p>💡 هنوز امتحانی برنامه‌ریزی نشده است.</p>
+      <button 
+        class="reserve-exam-btn"
+        (click)="navigateToExamReservation()"
       >
-        <div class="exam-icon">📝</div>
-        
-        <div class="exam-info">
-          <h3 class="exam-name">{{ exam.name }}</h3>
-          <div class="exam-details">
-            <span class="exam-room">📍 {{ exam.room.name }}</span>
-            <span class="exam-time">🕒 {{ exam.timeRange }}</span>
-          </div>
+        🗓️ رزرو اولین امتحان
+      </button>
+    </div>
+  </ng-template>
+</div>
+  <!-- بخش نظرسنجی‌ها (نسخه ساده شده) -->
+<div class="section-card" *ngIf="course?.surveys && course.surveys.length > 0">
+  <div class="section-header">
+    <h2>📊 نظرسنجی‌ها</h2>
+    <span class="section-badge">{{ convertToPersianNumbers(course.surveys.length.toString()) }} نظرسنجی</span>
+  </div>
+  <div *ngIf="!isUserLoggedIn" class="login-prompt">
+  <p>🔒 برای رأی دادن در نظرسنجی‌ها باید وارد حساب کاربری خود شوید.</p>
+  <button class="login-btn" (click)="goToLogin()">ورود به حساب کاربری</button>
+</div>
+  
+  <div class="surveys-list">
+    <div *ngFor="let survey of course.surveys" class="survey-card">
+      <div class="survey-header">
+        <h3 class="survey-title">{{ survey.title }}</h3>
+        <div class="survey-status">
+          <span class="survey-badge" [ngClass]="isSurveyActive(survey) ? 'status-active' : 'status-inactive'">
+            {{ isSurveyActive(survey) ? 'فعال' : 'بدون رأی' }}
+          </span>
+          <span class="total-votes">
+            <span class="vote-icon">👥</span>
+            {{ convertToPersianNumbers(survey.totalVotes.toString()) }} رأی
+          </span>
         </div>
-        
-        <div class="exam-date">
-          <div class="exam-day">{{ exam.dayOfWeek }}</div>
-          <div class="exam-date-number">{{ exam.persianDate }}</div>
-          <div class="exam-status" [ngClass]="getExamStatusClass(exam.startDate)">
-            {{ getExamStatusText(exam.startDate) }}
+      </div>
+      
+      <div class="survey-options-grid">
+        <div 
+          *ngFor="let option of survey.options; let i = index" 
+          class="survey-option"
+          [class.selected]="isOptionSelected(survey.id, i)"
+          [class.disabled]="!isUserLoggedIn || userRole !== 'student'"
+          (click)="voteForOption(survey.id, i)"
+          [attr.disabled]="hasUserVoted(survey.id) ? true : null"
+        >
+          <div class="option-content">
+            <span class="option-number">{{ convertToPersianNumbers((i + 1).toString()) }}</span>
+            <span class="option-text">{{ option }}</span>
+          </div>
+          
+          <!-- پیام اگر کاربر لاگین نکرده -->
+          <div *ngIf="!isUserLoggedIn" class="login-required">
+            برای رأی دادن وارد شوید
+          </div>
+          <div class="option-stats" *ngIf="isSurveyActive(survey)">
+            <div class="vote-count">
+              {{ convertToPersianNumbers(getSurveyOptionCount(survey, option).toString()) }} رأی
+            </div>
+            <div class="vote-percentage">
+              {{ convertToPersianNumbers(getSurveyOptionPercentage(survey, option).toFixed(0)) }}%
+            </div>
+          </div>
+          
+          <div class="vote-indicator" *ngIf="isOptionSelected(survey.id, i)">
+            <span class="check-icon">✓</span>
+            رأی شما
           </div>
         </div>
       </div>
+      
+      <!-- دکمه لغو رأی -->
+      <div class="survey-actions" *ngIf="hasUserVoted(survey.id)">
+        <button class="cancel-vote-btn" (click)="cancelVote(survey.id)">
+          ✕ لغو رأی
+        </button>
+      </div>
+      
+      <!-- پیام خطا -->
+      <div *ngIf="getSurveyError(survey.id)" class="survey-error">
+        {{ getSurveyError(survey.id) }}
+      </div>
     </div>
   </div>
+</div>
+
 
   <!-- لیست دانشجویان (مرتب شده بر اساس نام خانوادگی) -->
   <div class="section-card">
@@ -149,36 +255,6 @@
         </tbody>
       </table>
     </div>
-    
-    <!-- صفحه‌بندی -->
-    <!-- <div class="pagination" *ngIf="totalPages > 1">
-      <button 
-        class="page-btn" 
-        [disabled]="currentPage === 1"
-        (click)="changePage(currentPage - 1)"
-      >
-        ‹ قبلی
-      </button>
-      
-      <div class="page-numbers">
-        <span 
-          *ngFor="let page of [].constructor(totalPages); let i = index"
-          class="page-number"
-          [ngClass]="{ active: currentPage === i + 1 }"
-          (click)="changePage(i + 1)"
-        >
-          {{ convertToPersianNumbers((i + 1).toString()) }}
-        </span>
-      </div>
-      
-      <button 
-        class="page-btn" 
-        [disabled]="currentPage === totalPages"
-        (click)="changePage(currentPage + 1)"
-      >
-        بعدی ›
-      </button>
-    </div> -->
   </div>
 
   <!-- همه امتحان‌ها -->

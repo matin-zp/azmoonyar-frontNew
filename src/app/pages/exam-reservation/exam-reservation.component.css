@@ -68,6 +68,31 @@
   margin: 0;
 }
 
+/* ===== دکمه بروزرسانی ===== */
+.refresh-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #e6f2ff 0%, #d1e7ff 100%);
+  color: #000000;
+  border: 1.5px solid #93c5fd;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15);
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ===== پیام‌ها ===== */
 .success-message {
   background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
@@ -246,6 +271,78 @@
   cursor: default;
   border: none !important;
   box-shadow: none !important;
+}
+
+/* ===== استایل‌های تحلیل تاریخ‌ها ===== */
+
+/* EXCELLENT - سبز */
+.cal-excellent {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+  border-color: #10b981 !important;
+  color: #000000 !important;
+}
+
+.cal-excellent:hover {
+  background: linear-gradient(135deg, #10b981, #34d399) !important;
+  color: white !important;
+}
+
+/* GOOD - آبی */
+.cal-good {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  border-color: #3b82f6 !important;
+  color: #000000 !important;
+}
+
+.cal-good:hover {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+  color: white !important;
+}
+
+/* FAIR - زرد */
+.cal-fair {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  border-color: #d97706 !important;
+  color: #000000 !important;
+}
+
+.cal-fair:hover {
+  background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+  color: white !important;
+}
+
+/* POOR - قرمز */
+.cal-poor {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+  border-color: #ef4444 !important;
+  color: #000000 !important;
+}
+
+.cal-poor:hover {
+  background: linear-gradient(135deg, #ef4444, #f87171) !important;
+  color: white !important;
+}
+
+/* شاخص تحلیل در گوشه سلول */
+.cal-recommendation-indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.cal-recommendation-text {
+  font-size: 9px;
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  text-align: center;
+  opacity: 0.8;
+  font-weight: 700;
 }
 
 .selected-date-info {
@@ -721,6 +818,47 @@
   background: #fee2e2;
 }
 
+/* ===== راهنمای تحلیل تاریخ‌ها ===== */
+.analysis-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1.5px solid #93c5fd;
+}
+
+.analysis-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.analysis-legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.legend-excellent {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+}
+
+.legend-good {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.legend-fair {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.legend-poor {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+}
+
 /* ===== لودینگ ===== */
 .loading-overlay {
   position: fixed;
@@ -853,6 +991,11 @@
     width: 50px;
     margin: 2px;
   }
+  
+  .analysis-legend {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -878,4 +1021,82 @@
   .year-text {
     font-size: 16px;
   }
+  
+  .cal-recommendation-text {
+    font-size: 8px;
+  }
+  /* استایل برای تحلیل تاریخ انتخاب شده */
+.selected-date-analysis {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.analysis-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.analysis-status.cal-excellent {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.analysis-status.cal-good {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  border: 1px solid #3b82f6;
+}
+
+.analysis-status.cal-fair {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border: 1px solid #d97706;
+}
+
+.analysis-status.cal-poor {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* نشانگر تحلیل در هدر جدول */
+.table-date-analysis {
+  margin-right: 8px;
+}
+
+.analysis-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.analysis-badge.cal-excellent {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.analysis-badge.cal-good {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  border: 1px solid #3b82f6;
+}
+
+.analysis-badge.cal-fair {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border: 1px solid #d97706;
+}
+
+.analysis-badge.cal-poor {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
 }

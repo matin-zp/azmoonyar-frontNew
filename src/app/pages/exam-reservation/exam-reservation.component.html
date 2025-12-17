@@ -1,21 +1,20 @@
 <div class="exam-reservation-container" *ngIf="!loading; else loadingTpl">
   
   <!-- هدر صفحه -->
-  <!-- در بخش هدر صفحه -->
-<div class="reservation-header-section">
-  <div class="header-content">
-    <button class="back-btn" (click)="goBack()">← بازگشت به درس</button>
-    <div class="page-title">
-      <h1>رزرو امتحان جدید</h1>
-      <p>برای درس انتخاب شده، امتحان جدید رزرو کنید</p>
+  <div class="reservation-header-section">
+    <div class="header-content">
+      <button class="back-btn" (click)="goBack()">← بازگشت به درس</button>
+      <div class="page-title">
+        <h1>رزرو امتحان جدید</h1>
+        <p>برای درس انتخاب شده، امتحان جدید رزرو کنید</p>
+      </div>
+      
+      <!-- دکمه رفرش -->
+      <button class="refresh-btn" (click)="forceRefresh()" [disabled]="loading">
+        🔄 بروزرسانی
+      </button>
     </div>
-    
-    <!-- دکمه رفرش -->
-    <button class="refresh-btn" (click)="forceRefresh()" [disabled]="loading">
-      🔄 بروزرسانی
-    </button>
   </div>
-</div>
 
   <!-- پیام‌های موفقیت و خطا -->
   <div *ngIf="successMessage" class="success-message">
@@ -32,7 +31,7 @@
     <div class="calendar-card">
       <div class="calendar-header">
         <div class="calendar-nav">
-          <button class="cal-nav-btn" (click)="prevYear()">« سال قبل</button>
+          <!-- <button class="cal-nav-btn" (click)="prevYear()">« سال قبل</button> -->
           <button class="cal-nav-btn" (click)="prevMonth()">‹ ماه قبل</button>
         </div>
         
@@ -43,7 +42,7 @@
         
         <div class="calendar-nav">
           <button class="cal-nav-btn" (click)="nextMonth()">ماه بعد ›</button>
-          <button class="cal-nav-btn" (click)="nextYear()">سال بعد »</button>
+          <!-- <button class="cal-nav-btn" (click)="nextYear()">سال بعد »</button> -->
         </div>
       </div>
 
@@ -58,11 +57,46 @@
           [ngClass]="{
             'cal-today': day.isToday,
             'cal-selected': day.isSelected,
-            'cal-empty': day.day === null
+            'cal-empty': day.day === null,
+            'cal-excellent': day.dateAnalysis?.recommendationGroup === 'EXCELLENT',
+            'cal-good': day.dateAnalysis?.recommendationGroup === 'GOOD',
+            'cal-fair': day.dateAnalysis?.recommendationGroup === 'FAIR',
+            'cal-poor': day.dateAnalysis?.recommendationGroup === 'POOR'
           }"
           (click)="day.gregorianDate && onDateSelect(day.gregorianDate)"
+          [title]="getRecommendationTooltip(day.dateAnalysis)"
         >
           {{ day.day ?? '' }}
+          
+          <!-- نشانگر تحلیل -->
+          <div *ngIf="day.dateAnalysis" class="cal-recommendation-text">
+            {{ 
+              day.dateAnalysis.recommendationGroup === 'EXCELLENT' ? 'عالی' :
+              day.dateAnalysis.recommendationGroup === 'GOOD' ? 'خوب' :
+              day.dateAnalysis.recommendationGroup === 'FAIR' ? 'قابل قبول' :
+              day.dateAnalysis.recommendationGroup === 'POOR' ? 'نا مناسب' : ''
+            }}
+          </div>
+        </div>
+      </div>
+      
+      <!-- راهنمای تحلیل تاریخ‌ها -->
+      <div class="analysis-legend">
+        <div class="analysis-legend-item">
+          <div class="analysis-legend-color legend-excellent"></div>
+          <span>عالی (EXCELLENT)</span>
+        </div>
+        <div class="analysis-legend-item">
+          <div class="analysis-legend-color legend-good"></div>
+          <span>خوب (GOOD)</span>
+        </div>
+        <div class="analysis-legend-item">
+          <div class="analysis-legend-color legend-fair"></div>
+          <span>متوسط (FAIR)</span>
+        </div>
+        <div class="analysis-legend-item">
+          <div class="analysis-legend-color legend-poor"></div>
+          <span>ضعیف (POOR)</span>
         </div>
       </div>
       
@@ -70,6 +104,19 @@
         <div class="selected-date-label">تاریخ انتخاب شده:</div>
         <div class="selected-date-value">
           {{ getPersianDay(selectedDate) }}، {{ selectedJalaaliDate }}
+        </div>
+        <!-- نمایش تحلیل برای تاریخ انتخاب شده -->
+        <div *ngIf="getRecommendationForDate(selectedDate)" class="selected-date-analysis">
+          <div [ngClass]="'analysis-status ' + getRecommendationClass(getRecommendationForDate(selectedDate)?.recommendationGroup || '')">
+            وضعیت: 
+            {{
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'EXCELLENT' ? 'عالی' :
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'GOOD' ? 'خوب' :
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'FAIR' ? 'متوسط' :
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'POOR' ? 'ضعیف' : 'بدون تحلیل'
+            }}
+            ({{ getRecommendationForDate(selectedDate)?.studentsOnDayPercent | number:'1.0-0' }}٪ امتحان دارند)
+          </div>
         </div>
       </div>
     </div>
@@ -181,6 +228,17 @@
       <h2>وضعیت سالن‌ها در تاریخ انتخاب شده</h2>
       <div *ngIf="selectedDate" class="table-date">
         {{ selectedJalaaliDate }}
+        <span *ngIf="getRecommendationForDate(selectedDate)" class="table-date-analysis">
+          - 
+          <span [ngClass]="'analysis-badge ' + getRecommendationClass(getRecommendationForDate(selectedDate)?.recommendationGroup || '')">
+            {{
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'EXCELLENT' ? 'عالی' :
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'GOOD' ? 'خوب' :
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'FAIR' ? 'متوسط' :
+              getRecommendationForDate(selectedDate)?.recommendationGroup === 'POOR' ? 'ضعیف' : ''
+            }}
+          </span>
+        </span>
       </div>
     </div>
     
@@ -239,6 +297,9 @@
     <div class="loading-content">
       <div class="spinner"></div>
       <p class="loading-text">در حال بارگذاری اطلاعات...</p>
+      <p *ngIf="loadingAnalysis" style="margin-top: 10px; font-size: 14px; opacity: 0.8;">
+        در حال دریافت تحلیل تاریخ‌ها...
+      </p>
     </div>
   </div>
 </ng-template>

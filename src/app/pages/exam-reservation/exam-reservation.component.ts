@@ -39,12 +39,34 @@ interface TimeSlot {
   disabled: boolean;
 }
 
+// مدل جدید برای تحلیل تاریخ‌ها
+interface DateAnalysis {
+  date: string; // تاریخ میلادی به فرمت YYYY-MM-DD
+  recommendationGroup: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+  studentsOnDayPercent: number;
+  studentsYesterdayPercent: number;
+  studentsTomorrowPercent: number;
+  friday: boolean;
+}
+
+// مدل برای نگهداری تحلیل تاریخ به صورت شمسی
+interface JalaaliDateAnalysis {
+  jalaaliDate: string; // تاریخ شمسی به فرمت YYYY/MM/DD
+  recommendationGroup: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+  studentsOnDayPercent: number;
+  studentsYesterdayPercent: number;
+  studentsTomorrowPercent: number;
+  friday: boolean;
+  gregorianDate: Date; // تاریخ میلادی برای مقایسه
+}
+
 interface CalendarDay {
   day: number | null;
   jalaaliDate: string;
   gregorianDate: Date | null;
   isToday: boolean;
   isSelected: boolean;
+  dateAnalysis?: JalaaliDateAnalysis | null; // اضافه کردن این خط
 }
 
 interface RoomAvailability {
@@ -87,6 +109,10 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
   allExams: Exam[] = [];
   roomAvailabilities: RoomAvailability[] = [];
   
+  // تحلیل تاریخ‌ها
+  dateAnalyses: JalaaliDateAnalysis[] = [];
+  loadingAnalysis = false;
+  
   // زمان‌های انتخابی
   timeSlots: TimeSlot[] = [];
   selectedStartTime: string = '08:00';
@@ -110,6 +136,7 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
   // API endpoints
   examsApi = 'http://localhost:8081/api/exams';
   roomsApi = 'http://localhost:8081/api/rooms';
+  dateAnalysisApi = 'http://localhost:8081/api/courses'; // پایه
   
   private destroy$ = new Subject<void>();
 
@@ -145,10 +172,11 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
   private loadData(): void {
     this.loading = true;
     
-    // بارگذاری همزمان سالن‌ها و امتحان‌ها
+    // بارگذاری همزمان سالن‌ها، امتحان‌ها و تحلیل تاریخ‌ها
     Promise.all([
       this.loadRooms(),
-      this.loadExams()
+      this.loadExams(),
+      this.loadDateAnalysis()
     ]).then(() => {
       this.loading = false;
     }).catch(err => {
@@ -156,6 +184,159 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
       this.errorMessage = 'خطا در بارگذاری اطلاعات سیستم';
       this.loading = false;
     });
+  }
+
+  private loadDateAnalysis(): Promise<void> {
+    if (!this.courseId) {
+      return Promise.resolve();
+    }
+    
+    this.loadingAnalysis = true;
+    return new Promise((resolve, reject) => {
+      const url = `${this.dateAnalysisApi}/${this.courseId}/exam-date-analysis`;
+      const timestamp = new Date().getTime();
+      const fullUrl = `${url}?t=${timestamp}`;
+      
+      this.http.get<DateAnalysis[]>(fullUrl)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (analyses) => {
+            console.log('📊 تحلیل تاریخ‌های دریافتی:', analyses);
+            this.convertAnalysesToJalaali(analyses);
+            this.loadingAnalysis = false;
+            resolve();
+          },
+          error: (err) => {
+            console.error('خطا در دریافت تحلیل تاریخ‌ها:', err);
+            this.loadingAnalysis = false;
+            // عدم موفقیت در دریافت تحلیل تاریخ‌ها نباید کل برنامه را متوقف کند
+            resolve();
+          }
+        });
+    });
+  }
+
+  /**
+   * تبدیل تحلیل تاریخ‌های میلادی به شمسی
+   */
+  private convertAnalysesToJalaali(analyses: DateAnalysis[]): void {
+    this.dateAnalyses = [];
+    
+    for (const analysis of analyses) {
+      try {
+        // تبدیل تاریخ میلادی به Date object
+        const [year, month, day] = analysis.date.split('-').map(Number);
+        const gregorianDate = new Date(year, month - 1, day);
+        
+        // تبدیل به تاریخ شمسی
+        const jalaaliDate = jalaali.toJalaali(gregorianDate);
+        const jalaaliDateStr = `${jalaaliDate.jy}/${this.pad(jalaaliDate.jm)}/${this.pad(jalaaliDate.jd)}`;
+        
+        // ایجاد مدل ترکیبی
+        const jalaaliAnalysis: JalaaliDateAnalysis = {
+          jalaaliDate: jalaaliDateStr,
+          recommendationGroup: analysis.recommendationGroup,
+          studentsOnDayPercent: analysis.studentsOnDayPercent,
+          studentsYesterdayPercent: analysis.studentsYesterdayPercent,
+          studentsTomorrowPercent: analysis.studentsTomorrowPercent,
+          friday: analysis.friday,
+          gregorianDate: gregorianDate
+        };
+        
+        this.dateAnalyses.push(jalaaliAnalysis);
+      } catch (error) {
+        console.error('خطا در تبدیل تاریخ:', analysis.date, error);
+      }
+    }
+    
+    console.log('📊 تحلیل تاریخ‌های شمسی:', this.dateAnalyses);
+  }
+
+  /**
+   * دریافت توصیه برای یک تاریخ خاص
+   */
+  getRecommendationForDate(date: Date): JalaaliDateAnalysis | null {
+    if (!date || this.dateAnalyses.length === 0) {
+      return null;
+    }
+    
+    // تبدیل تاریخ به رشته YYYY-MM-DD برای مقایسه
+    const dateStr = this.formatGregorianDate(date);
+    
+    // جستجوی تحلیل برای این تاریخ
+    return this.dateAnalyses.find(analysis => {
+      const analysisDateStr = this.formatGregorianDate(analysis.gregorianDate);
+      return analysisDateStr === dateStr;
+    }) || null;
+  }
+
+  /**
+   * قالب‌بندی تاریخ میلادی به YYYY-MM-DD
+   */
+  private formatGregorianDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    return `${year}-${this.pad(month)}-${this.pad(day)}`;
+  }
+
+  /**
+   * دریافت کلاس CSS برای توصیه
+   */
+  getRecommendationClass(recommendation: string): string {
+    switch (recommendation) {
+      case 'EXCELLENT':
+        return 'cal-excellent';
+      case 'GOOD':
+        return 'cal-good';
+      case 'FAIR':
+        return 'cal-fair';
+      case 'POOR':
+        return 'cal-poor';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * دریافت متن توصیه برای نمایش در tooltip
+   */
+  getRecommendationTooltip(analysis: JalaaliDateAnalysis | null | undefined): string {
+    if (!analysis) {
+      return 'بدون تحلیل';
+    }
+    
+    const groupText = this.getRecommendationGroupText(analysis.recommendationGroup);
+    const dayPercent = Math.round(analysis.studentsOnDayPercent);
+    const yesterdayPercent = Math.round(analysis.studentsYesterdayPercent);
+    const tomorrowPercent = Math.round(analysis.studentsTomorrowPercent);
+    
+    return `
+      وضعیت: ${groupText}
+      ${dayPercent}٪ از دانشجویان در این روز امتحان دیگری دارند
+      ${yesterdayPercent}٪ از دانشجویان در روز قبل امتحان دیگری دارند
+      ${tomorrowPercent}٪ از دانشجویان فردا امتحان دیگری دارند
+      ${analysis.friday ? '' : ''}
+    `.trim();
+  }
+
+  /**
+   * دریافت متن فارسی برای گروه توصیه
+   */
+  private getRecommendationGroupText(group: string): string {
+    switch (group) {
+      case 'EXCELLENT':
+        return 'عالی';
+      case 'GOOD':
+        return 'خوب';
+      case 'FAIR':
+        return 'متوسط';
+      case 'POOR':
+        return 'ضعیف';
+      default:
+        return group;
+    }
   }
 
   private loadRooms(): Promise<void> {
@@ -179,25 +360,6 @@ export class ExamReservationComponent implements OnInit, OnDestroy {
     });
   }
 
-  // private loadExams(): Promise<void> {
-  //   this.loadingExams = true;
-  //   return new Promise((resolve, reject) => {
-  //     this.http.get<Exam[]>(this.examsApi)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe({
-  //         next: (exams) => {
-  //           this.allExams = exams;
-  //           this.loadingExams = false;
-  //           resolve();
-  //         },
-  //         error: (err) => {
-  //           console.error('خطا در دریافت امتحان‌ها:', err);
-  //           this.loadingExams = false;
-  //           reject(err);
-  //         }
-  //       });
-  //   });
-  // }
   private loadExams(): Promise<void> {
   this.loadingExams = true;
   return new Promise((resolve, reject) => {
@@ -294,13 +456,19 @@ private refreshExams(): void {
       const isSelected = this.selectedDate ? 
         date.toDateString() === this.selectedDate.toDateString() : false;
       
-      this.calendarGrid.push({
+      // دریافت تحلیل برای این تاریخ
+      const dateAnalysis = this.getRecommendationForDate(date);
+      
+      const calendarDay: CalendarDay = {
         day,
         jalaaliDate,
         gregorianDate: date,
         isToday,
-        isSelected
-      });
+        isSelected,
+        dateAnalysis: dateAnalysis // اضافه کردن تحلیل به روز
+      };
+      
+      this.calendarGrid.push(calendarDay);
     }
   }
 
@@ -311,7 +479,8 @@ private refreshExams(): void {
         jalaaliDate: '',
         gregorianDate: null,
         isToday: false,
-        isSelected: false
+        isSelected: false,
+        dateAnalysis: null
       };
     }
     
@@ -328,13 +497,19 @@ private refreshExams(): void {
     const isSelected = this.selectedDate ? 
       date.toDateString() === this.selectedDate.toDateString() : false;
     
-    return {
+    // دریافت تحلیل برای این تاریخ
+    const dateAnalysis = this.getRecommendationForDate(date);
+    
+    const calendarDay: CalendarDay = {
       day,
       jalaaliDate,
       gregorianDate: date,
       isToday,
-      isSelected
+      isSelected,
+      dateAnalysis: dateAnalysis
     };
+    
+    return calendarDay;
   }
 
   /**
@@ -644,35 +819,6 @@ private calculateRoomAvailabilities(): void {
     return true;
   }
   /**
-   * بارگذاری مجدد امتحان‌ها
-   */
-  // private refreshExams(): void {
-  //   console.log('🔄 بارگذاری مجدد امتحان‌ها...');
-    
-  //   this.http.get<Exam[]>(this.examsApi)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (exams) => {
-  //         this.allExams = exams;
-  //         console.log('✅ امتحان‌ها با موفقیت refresh شدند. تعداد:', exams.length);
-          
-  //         // اگر تاریخ انتخاب شده‌ای داریم، وضعیت سالن‌ها را مجدد محاسبه کن
-  //         if (this.selectedDate) {
-  //           this.calculateRoomAvailabilities();
-  //         }
-  //       },
-  //       error: (err) => {
-  //         console.error('❌ خطا در refresh امتحان‌ها:', err);
-  //       }
-  //     });
-  // }
-
-  /**
-   * ارسال فرم رزرو
-   */
-  /**
- * ارسال فرم رزرو
- */
 /**
  * ارسال فرم رزرو (نسخه آزمایشی برای debug)
  */
@@ -794,7 +940,8 @@ forceRefresh(): void {
   // بارگذاری مجدد همه داده‌ها
   Promise.all([
     this.loadRooms(),
-    this.loadExams()
+    this.loadExams(),
+    this.loadDateAnalysis()
   ]).then(() => {
     this.loading = false;
     
@@ -802,6 +949,9 @@ forceRefresh(): void {
     if (this.selectedDate) {
       this.calculateRoomAvailabilities();
     }
+    
+    // تولید مجدد تقویم برای نمایش تحلیل‌های جدید
+    this.generateCalendar();
     
     console.log('✅ رفرش اجباری کامل شد');
   }).catch(err => {
